@@ -1,0 +1,137 @@
+dius: 15px;
+  margin-bottom: 12px;
+  opacity: 0;body {
+  margin: 0;
+  overflow: hidden;
+  font-family: 'Segoe UI', sans-serif;
+  background: radial-gradient(circle at center, #0d1b2a 0%, #0a192f 50%, #000814 100%);
+}
+
+/* Canvas pháo hoa */
+#fireworks {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Sao lấp lánh */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: 
+    radial-gradient(2px 2px at 20% 30%, white, transparent),
+    radial-gradient(2px 2px at 70% 60%, white, transparent),
+    radial-gradient(1.5px 1.5px at 40% 80%, white, transparent),
+    radial-gradient(1.5px 1.5px at 85% 20%, white, transparent);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Ánh sáng trung tâm */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.08), transparent 60%);
+  pointer-events: none;
+}
+
+.year {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 130px;
+  font-weight: bold;
+  color: #ffffff;
+  opacity: 0.08;
+  text-shadow: 0 0 25px #ffffff;
+  z-index: 1;
+}
+
+.title {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  top: 40px;
+  font-size: 42px;
+  font-weight: bold;
+  color: #ffffff;
+  letter-spacing: 2px;
+  text-shadow: 0 0 20px #ffffff, 0 0 40px #4cc9f0;
+  animation: glow 2s infinite alternate;
+  z-index: 2;
+}
+
+@keyframes glow {
+  from { text-shadow: 0 0 15px #4cc9f0; }
+  to { text-shadow: 0 0 40px #ffffff; }
+}
+
+/* Vật rơi */
+.flower {
+  position: absolute;
+  font-size: 34px;
+  cursor: pointer;
+  animation: fall linear forwards;
+  z-index: 3;
+}
+
+@keyframes fall {
+  0% { transform: translateY(-60px) rotate(0deg); }
+  100% { transform: translateY(110vh) rotate(360deg); }
+}
+
+/* Popup */
+.popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.popup-content {
+  background: linear-gradient(#ffffff, #dbeafe);
+  padding: 25px;
+  border-radius: 20px;
+  text-align: center;
+  max-width: 340px;
+  animation: zoom 0.4s;
+  box-shadow: 0 0 30px #4cc9f0;
+}
+
+.popup-content img {
+  width: 100%;
+  border-ra
+  transition: opacity 0.5s ease;
+}
+
+.popup-content img.show {
+  opacity: 1;
+}
+
+.popup-content p {
+  font-size: 18px;
+  line-height: 1.6;
+  color: #0a192f;
+  font-weight: 500;
+}
+
+@keyframes zoom {
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.close {
+  margin-top: 10px;
+  font-size: 14px;
+  opacity: 0.7;
+}
