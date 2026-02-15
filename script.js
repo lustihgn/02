@@ -1,98 +1,135 @@
-document.addEventListener("DOMContentLoaded", () => {
+* {
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
 
-    // DANH SÁCH ẢNH (cùng cấp index.html)
-    const IMAGES = [
-        "anh1.jpg",
-        "anh2.jpg",
-        "anh3.jpg",
-        "anh4.jpg",
-        "anh5.jpg",
-        "anh6.jpg",
-        "anh7.jpg",
-        "anh8.jpg",
-        "anh9.jpg",
-        "anh10.jpg",
-        "anh11.jpg",
-        "anh12.jpg"
-    ];
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #ffe0ec, #fff7fb);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+}
 
-    const zone = document.getElementById("balloonZone");
+/* Wrapper */
+.wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
 
-    const BALLOON_SIZE = 140;
-    const MAX_BALLOONS = 6;
-    const SPAWN_INTERVAL = 1500; // Giảm tốc độ xuất hiện (ms)
+/* Card */
+.card {
+    width: 95vw;
+    max-width: 1200px;
+    min-height: 500px;
+    background: #fff;
+    border-radius: 20px;
+    display: flex;
+    padding: 30px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+}
 
-    let active = 0;
-    const pool = [];
+.card:hover {
+    transform: scale(1.05); /* Hiệu ứng phóng to khi hover */
+}
 
-    // Tạo 1 bóng bay (tái sử dụng)
-    function createBalloon() {
-        const b = document.createElement("div");
-        b.className = "balloon";
+/* Content */
+.content {
+    flex: 1;
+    padding-right: 20px;
+}
 
-        const img = document.createElement("img");
-        img.style.display = "none"; // ⬅️ ẨN cho tới khi load xong
-        b.appendChild(img);
+.content h1 {
+    font-size: 36px;
+    color: #ff6b9d;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Đổ bóng cho tiêu đề */
+}
 
-        b.onclick = () => zoomImage(img.src);
-        return b;
+.date {
+    display: inline-block;
+    background: #ff6b9d;
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 30px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.message {
+    line-height: 1.6;
+    color: #555;
+    font-size: 18px;
+}
+
+/* Balloon Zone */
+.balloon-zone {
+    flex: 1;
+    position: relative;
+    min-height: 450px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow: hidden;
+}
+
+/* Balloon */
+.balloon {
+    position: absolute;
+    bottom: -160px;
+    width: 140px;
+    animation: flyUp 7s linear forwards;
+    cursor: pointer;
+    will-change: transform;
+}
+
+.balloon img {
+    width: 100%;
+    border-radius: 50%;
+    border: 5px solid #ff8bb5;
+    background: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Tạo bóng đổ cho bóng bay */
+}
+
+/* Animation */
+@keyframes flyUp {
+    from {
+        transform: translateY(0);
+        opacity: 1;
     }
-
-    // Hàm spawn bóng bay liên tục với tần suất thấp
-    function spawnBalloon() {
-        if (active >= MAX_BALLOONS) return;
-
-        const balloon = pool.pop() || createBalloon();
-        const img = balloon.querySelector("img");
-
-        img.style.display = "none";
-
-        const src = IMAGES[Math.floor(Math.random() * IMAGES.length)];
-
-        // preload ảnh (FIX ❓ iOS)
-        const temp = new Image();
-
-        temp.onload = () => {
-            img.src = src;
-            img.style.display = "block";
-
-            const maxLeft = Math.max(0, zone.clientWidth - BALLOON_SIZE);
-            balloon.style.left = Math.random() * maxLeft + "px";
-            balloon.style.animationDuration = (6 + Math.random() * 3) + "s"; // Để mỗi bóng bay bay trong khoảng thời gian ngẫu nhiên
-
-            zone.appendChild(balloon);
-            active++;
-
-            setTimeout(() => {
-                balloon.remove();
-                pool.push(balloon);
-                active--;
-            }, 9000); // Thời gian sống của bóng bay (9 giây)
-        };
-
-        temp.onerror = () => {
-            // Ảnh lỗi → bỏ qua (KHÔNG hiện ❓)
-            pool.push(balloon);
-        };
-
-        temp.src = src;
+    to {
+        transform: translateY(-800px);
+        opacity: 0;
     }
+}
 
-    // Chạy bóng bay liên tục nhưng với thời gian xuất hiện lâu hơn
-    setInterval(spawnBalloon, SPAWN_INTERVAL);
+/* Zoom overlay */
+.zoom {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
 
-    // Zoom ảnh
-    function zoomImage(src) {
-        const overlay = document.createElement("div");
-        overlay.className = "zoom";
+.zoom img {
+    max-width: 80%;
+    max-height: 80%;
+    border-radius: 20px;
+}
 
-        const img = document.createElement("img");
-        img.src = src;
-
-        overlay.appendChild(img);
-        document.body.appendChild(overlay);
-
-        overlay.onclick = () => overlay.remove();
+/* Mobile */
+@media (max-width: 768px) {
+    .card {
+        flex-direction: column;
+        min-height: 100vh;
+        border-radius: 0;
     }
-
-});
+}
