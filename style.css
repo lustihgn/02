@@ -6,67 +6,107 @@
 body {
     margin: 0;
     height: 100vh;
-    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.scene {
-    perspective: 2000px;
-}
-
-.book {
-    width: 300px;
-    height: 420px;
-    position: relative;
-}
-
-.paper {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    transform-origin: left;
-    transition: transform 1s;
-    transform-style: preserve-3d;
-}
-
-.page {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.25);
-    backface-visibility: hidden;
+    background: #f8dada;
     overflow: hidden;
+}
+
+/* Card */
+.card {
+    width: 90%;
+    max-width: 900px;
+    height: 420px;
+    margin: auto;
+    margin-top: 80px;
+    background: #fceeee;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    padding: 40px;
+    position: relative;
+    z-index: 2;
+}
+
+/* Left text */
+.left {
+    flex: 1;
+}
+
+.left h1 {
+    font-size: 48px;
+    color: #d94f4f;
+    margin: 0;
+}
+
+.date {
+    margin-top: 15px;
+    background: #d94f4f;
+    color: white;
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+/* Center avatar */
+.center {
+    flex: 1;
     text-align: center;
 }
 
-.page img {
+.avatar {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 6px solid #d94f4f;
+    margin: auto;
+}
+
+.avatar img {
     width: 100%;
-    height: 70%;
+    height: 100%;
     object-fit: cover;
 }
 
-.page p {
-    padding: 15px;
-    font-size: 16px;
-    color: #ff4d6d;
+.name {
+    margin-top: 15px;
+    font-size: 18px;
+    color: #d94f4f;
 }
 
-.back {
-    transform: rotateY(180deg);
+/* Balloons */
+.balloon {
+    position: absolute;
+    bottom: -200px;
+    width: 90px;
+    animation: flyUp linear forwards;
 }
 
-.paper.flipped {
-    transform: rotateY(-180deg);
+.balloon img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #ff6b6b;
+    background: white;
 }
 
-.hint {
-    margin-top: 20px;
-    color: white;
-    opacity: 0.9;
-    font-size: 14px;
+.balloon::after {
+    content: "";
+    width: 2px;
+    height: 60px;
+    background: #aaa;
+    display: block;
+    margin: auto;
+}
+
+@keyframes flyUp {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(-120vh);
+        opacity: 0;
+    }
 }
