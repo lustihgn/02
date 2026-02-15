@@ -1,7 +1,7 @@
 const balloonImages = [
-    "images/pic1.jpg",
-    "images/pic2.jpg",
-    "images/pic3.jpg"
+    "anh1.jpg",
+    "anh2.jpg",
+    "anh3.jpg"
 ];
 
 function createBalloon() {
