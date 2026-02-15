@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    // DANH SÁCH ẢNH (cùng cấp index.html)
+    // Danh sách ảnh bóng bay
     const IMAGES = [
         "anh1.jpg",
         "anh2.jpg",
@@ -19,27 +19,46 @@ document.addEventListener("DOMContentLoaded", () => {
     const zone = document.getElementById("balloonZone");
 
     const BALLOON_SIZE = 140;
-    const MAX_BALLOONS = 6;
-    const SPAWN_INTERVAL = 800; // giảm tốc độ xuất hiện (ms)
+    const SPAWN_INTERVAL = 1500; // Tốc độ xuất hiện bóng bay (ms)
 
-    let active = 0;
+    const MAX_BALLOONS = 6; // Số lượng bóng bay tối đa hiển thị cùng lúc
+    let activeBalloons = 0;
     const pool = [];
+    const balloonPositions = []; // Mảng lưu vị trí đã sử dụng
 
-    // Tạo 1 bóng bay (tái sử dụng)
+    // Tạo một bóng bay (tái sử dụng)
     function createBalloon() {
-        const b = document.createElement("div");
-        b.className = "balloon";
+        const balloon = document.createElement("div");
+        balloon.className = "balloon";
 
         const img = document.createElement("img");
-        img.style.display = "none"; // ⬅️ ẨN cho tới khi load xong
-        b.appendChild(img);
+        img.style.display = "none"; // Ẩn cho đến khi ảnh tải xong
+        balloon.appendChild(img);
 
-        b.onclick = () => zoomImage(img.src);
-        return b;
+        balloon.onclick = () => zoomImage(img.src);
+        return balloon;
+    }
+
+    // Hàm xác định vị trí trống trên màn hình
+    function getAvailablePosition() {
+        const maxLeft = Math.max(0, zone.clientWidth - BALLOON_SIZE);
+        let pos;
+        
+        // Lặp lại cho đến khi tìm được vị trí chưa được sử dụng
+        do {
+            pos = Math.random() * maxLeft;
+        } while (balloonPositions.includes(pos));
+
+        balloonPositions.push(pos); // Thêm vị trí vào mảng
+        if (balloonPositions.length > MAX_BALLOONS) {
+            balloonPositions.shift(); // Xóa vị trí cũ nếu đã vượt quá giới hạn
+        }
+
+        return pos;
     }
 
     function spawnBalloon() {
-        if (active >= MAX_BALLOONS) return;
+        if (activeBalloons >= MAX_BALLOONS) return; // Hạn chế số lượng bóng bay xuất hiện đồng thời
 
         const balloon = pool.pop() || createBalloon();
         const img = balloon.querySelector("img");
@@ -48,39 +67,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const src = IMAGES[Math.floor(Math.random() * IMAGES.length)];
 
-        // preload ảnh (FIX ❓ iOS)
-        const temp = new Image();
-
-        temp.onload = () => {
+        // Preload ảnh
+        const tempImg = new Image();
+        tempImg.onload = () => {
             img.src = src;
             img.style.display = "block";
 
-            const maxLeft = Math.max(0, zone.clientWidth - BALLOON_SIZE);
-            balloon.style.left = Math.random() * maxLeft + "px";
-            balloon.style.animationDuration = (6 + Math.random() * 3) + "s";
+            // Xác định vị trí mới cho bóng bay
+            const leftPos = getAvailablePosition();
+            balloon.style.left = leftPos + "px";
+            balloon.style.animationDuration = (6 + Math.random() * 3) + "s"; // Bóng bay bay lâu hơn
 
             zone.appendChild(balloon);
-            active++;
+            activeBalloons++;
 
+            // Sau khi bóng bay bay lên, xóa nó đi
             setTimeout(() => {
                 balloon.remove();
                 pool.push(balloon);
-                active--;
-            }, 9000);
+                activeBalloons--;
+            }, 9000); // Thời gian bóng bay tồn tại
         };
 
-        temp.onerror = () => {
-            // Ảnh lỗi → bỏ qua (KHÔNG hiện ❓)
+        tempImg.onerror = () => {
             pool.push(balloon);
         };
 
-        temp.src = src;
+        tempImg.src = src;
     }
 
-    // BAY LIÊN TỤC – KHÔNG DELAY
-    setInterval(spawnBalloon, SPAWN_INTERVAL);
+    // Lặp liên tục để tạo bóng bay mới
+    setInterval(spawnBalloon, SPAWN_INTERVAL); // Giảm tốc độ xuất hiện của bóng bay
 
-    // Zoom ảnh
+    // Zoom ảnh khi nhấn vào bóng bay
     function zoomImage(src) {
         const overlay = document.createElement("div");
         overlay.className = "zoom";
