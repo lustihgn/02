@@ -6,88 +6,131 @@
 body {
     margin: 0;
     height: 100vh;
-    background: #f8dada;
+    background: linear-gradient(135deg, #f7c6c6, #fdeaea);
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
 }
 
-/* Card */
+/* CARD */
 .card {
-    width: 90%;
-    max-width: 900px;
-    height: 420px;
-    background: #fceeee;
-    border-radius: 20px;
+    width: 92%;
+    max-width: 950px;
+    height: 460px;
+    background: #fdeaea;
+    border-radius: 22px;
     display: flex;
     padding: 40px;
-    position: relative;
-    z-index: 1;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.25);
 }
 
-/* Left text */
+/* BÊN TRÁI */
 .left {
     flex: 1;
+    padding-right: 20px;
 }
 
-.left h1 {
-    font-size: 48px;
-    color: #d94f4f;
+/* TIÊU ĐỀ */
+.title {
+    font-size: 52px;
+    font-weight: 800;
+    background: linear-gradient(45deg, #ff5f6d, #ff9a9e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     margin: 0;
+    text-shadow: 2px 4px 10px rgba(0,0,0,0.2);
 }
 
+/* NGÀY */
 .date {
-    margin-top: 15px;
-    background: #d94f4f;
+    margin-top: 12px;
+    background: #ff5f6d;
     color: white;
-    padding: 6px 14px;
+    padding: 6px 18px;
     border-radius: 20px;
     display: inline-block;
+    font-size: 14px;
 }
 
-/* Balloon zone (giữa thiệp) */
+/* LỜI CHÚC */
+.wish {
+    margin-top: 20px;
+    font-size: 16px;
+    line-height: 1.7;
+    color: #444;
+    background: rgba(255,255,255,0.6);
+    padding: 16px 18px;
+    border-radius: 14px;
+    box-shadow: inset 0 0 10px rgba(255,255,255,0.7);
+}
+
+/* KHU VỰC BÓNG */
 .balloon-zone {
     flex: 1;
     position: relative;
     overflow: hidden;
 }
 
-/* Balloon */
+/* BÓNG */
 .balloon {
     position: absolute;
-    bottom: -180px;
-    width: 140px;               /* TO – RÕ */
-    z-index: 10;                /* NẰM TRƯỚC THIỆP */
-    animation: flyUp linear forwards;
+    bottom: -260px;
+    width: 200px;
+    animation:
+        flyUp linear forwards,
+        sway 3s ease-in-out infinite;
+    cursor: pointer;
+    z-index: 10;
 }
 
+/* ẢNH */
 .balloon img {
     width: 100%;
-    height: 160px;
+    height: 220px;
     object-fit: cover;
     border-radius: 50%;
-    border: 4px solid #ff6b6b;
+    border: 6px solid #ff6b6b;
     background: white;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.35);
 }
 
-/* dây bóng */
+/* DÂY */
 .balloon::after {
     content: "";
     display: block;
     width: 2px;
-    height: 70px;
+    height: 90px;
     background: #999;
     margin: auto;
 }
 
+/* BAY LÊN */
 @keyframes flyUp {
-    from {
-        transform: translateY(0);
-        opacity: 1;
-    }
-    to {
-        transform: translateY(-520px);
-        opacity: 0;
-    }
+    from { transform: translateY(0); opacity: 1; }
+    to   { transform: translateY(-560px); opacity: 0; }
+}
+
+/* LẮC LƯ */
+@keyframes sway {
+    0% { transform: translateX(0); }
+    50% { transform: translateX(15px); }
+    100% { transform: translateX(0); }
+}
+
+/* PHÓNG TO ẢNH */
+.zoom {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.zoom img {
+    width: 70%;
+    max-width: 500px;
+    border-radius: 20px;
 }
