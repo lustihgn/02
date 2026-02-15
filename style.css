@@ -5,8 +5,8 @@
 
 body {
     margin: 0;
-    background: linear-gradient(135deg, #ffe0ec, #fff7fb);
     min-height: 100vh;
+    background: linear-gradient(135deg, #ffe0ec, #fff7fb);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -30,14 +30,11 @@ body {
     display: flex;
     padding: 30px;
     box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-    position: relative;
-    overflow: visible;
 }
 
-/* Nội dung */
+/* Content */
 .content {
     flex: 1;
-    padding-right: 20px;
 }
 
 .content h1 {
@@ -52,34 +49,31 @@ body {
     color: #fff;
     padding: 6px 16px;
     border-radius: 20px;
-    font-size: 14px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .message {
-    font-size: 16px;
     line-height: 1.6;
     color: #555;
 }
 
-/* Balloon zone */
+/* Balloon Zone */
 .balloon-zone {
     flex: 1;
     position: relative;
-    min-height: 400px;
-    overflow: visible;
+    min-height: 450px;
 }
 
 /* Balloon */
 .balloon {
     position: absolute;
-    bottom: -150px;
-    width: 150px;
+    bottom: -160px;
+    width: 140px;
     animation: flyUp linear forwards;
     cursor: pointer;
+    will-change: transform; /* GPU acceleration */
 }
 
-/* Image inside balloon */
 .balloon img {
     width: 100%;
     border-radius: 50%;
@@ -87,23 +81,23 @@ body {
     background: #fff;
 }
 
-/* Fly animation */
+/* Animation */
 @keyframes flyUp {
     from {
         transform: translateY(0);
         opacity: 1;
     }
     to {
-        transform: translateY(-700px);
+        transform: translateY(-800px);
         opacity: 0;
     }
 }
 
-/* Zoom overlay */
+/* Zoom */
 .zoom {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.7);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -122,9 +116,5 @@ body {
         flex-direction: column;
         min-height: 100vh;
         border-radius: 0;
-    }
-
-    .balloon-zone {
-        min-height: 300px;
     }
 }
