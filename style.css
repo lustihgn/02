@@ -71,9 +71,7 @@ body {
     bottom: -120px;
     width: 220px;
     z-index: 10;
-    animation:
-        flyUp linear forwards,
-        sway 3s ease-in-out infinite;
+    animation: flyUp linear forwards, sway 4s ease-in-out infinite;
 }
 
 /* ẢNH TRONG BÓNG */
