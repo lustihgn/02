@@ -19,6 +19,9 @@ let balloonCount = 0; // Biến theo dõi số lượng bóng bay
 
 // Giới hạn tối đa bóng bay hiển thị cùng lúc
 const MAX_BALLOONS = 10;
+let lastBalloonTime = 0; // Thời gian tạo bóng bay cuối cùng (giới hạn tần suất tạo bóng bay)
+
+const MIN_INTERVAL = 2000; // Thời gian tạo bóng bay tối thiểu (2 giây)
 
 // Tạo bóng bay mới
 function createBalloon() {
@@ -57,8 +60,23 @@ function createBalloon() {
     };
 }
 
-// Điều chỉnh tần suất tạo bóng bay (mỗi 3 giây thay vì 2.6 giây)
-setInterval(createBalloon, 3000);
+// Hàm kiểm tra thời gian tạo bóng bay và quyết định tạo bóng bay mới
+function checkAndCreateBalloon() {
+    const now = Date.now();
+    if (now - lastBalloonTime >= MIN_INTERVAL) {
+        createBalloon();
+        lastBalloonTime = now;
+    }
+}
+
+// Sử dụng requestAnimationFrame để gọi hàm kiểm tra và tạo bóng bay
+function animateBalloon() {
+    checkAndCreateBalloon();
+    requestAnimationFrame(animateBalloon); // Tiếp tục gọi hàm này mỗi khung hình
+}
+
+// Bắt đầu tạo bóng bay khi trang load
+animateBalloon();
 
 // Phóng to ảnh khi click vào bóng bay
 function zoomImage(src) {
