@@ -14,14 +14,15 @@ const images = [
 ];
 
 const zone = document.getElementById("balloonZone");
-const BALLOON_SIZE = 220;
+const BALLOON_SIZE = 150; // Kích thước nhỏ hơn để phù hợp với thiết bị di động
 let balloonCount = 0; // Biến theo dõi số lượng bóng bay
 
 // Giới hạn tối đa bóng bay hiển thị cùng lúc
-const MAX_BALLOONS = 10;
+const MAX_BALLOONS = 6; // Giảm số lượng bóng bay cùng lúc
 let lastBalloonTime = 0; // Thời gian tạo bóng bay cuối cùng (giới hạn tần suất tạo bóng bay)
-const MIN_INTERVAL = 1500; // Thời gian tạo bóng bay tối thiểu (1.5 giây)
+const MIN_INTERVAL = 2000; // Thời gian tạo bóng bay tối thiểu (2 giây)
 
+// Tạo bóng bay mới
 function createBalloon() {
     // Kiểm tra số lượng bóng bay hiện tại
     if (balloonCount >= MAX_BALLOONS) return;
