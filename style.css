@@ -29,32 +29,42 @@ body {
     border-radius: 20px;
     display: flex;
     padding: 30px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+}
+
+.card:hover {
+    transform: scale(1.05); /* Hiệu ứng phóng to khi hover */
 }
 
 /* Content */
 .content {
     flex: 1;
+    padding-right: 20px;
 }
 
 .content h1 {
-    font-size: 32px;
+    font-size: 36px;
     color: #ff6b9d;
     margin-bottom: 10px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Đổ bóng cho tiêu đề */
 }
 
 .date {
     display: inline-block;
     background: #ff6b9d;
     color: #fff;
-    padding: 6px 16px;
-    border-radius: 20px;
-    margin-bottom: 15px;
+    padding: 8px 18px;
+    border-radius: 30px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    font-size: 18px;
 }
 
 .message {
     line-height: 1.6;
     color: #555;
+    font-size: 18px;
 }
 
 /* Balloon Zone */
@@ -63,10 +73,9 @@ body {
     position: relative;
     min-height: 450px;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    overflow: hidden; /* Không cho bóng bay chồng lên */
+    justify-content: center;
+    align-items: flex-start;
+    overflow: hidden;
 }
 
 /* Balloon */
@@ -74,7 +83,7 @@ body {
     position: absolute;
     bottom: -160px;
     width: 140px;
-    animation: flyUp linear forwards;
+    animation: flyUp 7s linear forwards;
     cursor: pointer;
     will-change: transform;
 }
@@ -84,6 +93,7 @@ body {
     border-radius: 50%;
     border: 5px solid #ff8bb5;
     background: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Tạo bóng đổ cho bóng bay */
 }
 
 /* Animation */
@@ -102,7 +112,7 @@ body {
 .zoom {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0, 0, 0, 0.7);
     display: flex;
     align-items: center;
     justify-content: center;
