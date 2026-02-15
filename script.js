@@ -11,16 +11,16 @@ function createBalloon() {
     const img = document.createElement("img");
     img.src = balloonImages[Math.floor(Math.random() * balloonImages.length)];
 
-    balloon.style.left = Math.random() * 90 + "vw";
+    balloon.style.left = Math.random() * 50 + 50 + "vw"; // Bóng bay sẽ chỉ xuất hiện ở phần phải của màn hình
     balloon.style.animationDuration = 6 + Math.random() * 4 + "s";
 
     balloon.appendChild(img);
-    document.body.appendChild(balloon);
+    document.getElementById("balloons").appendChild(balloon);
 
     setTimeout(() => {
         balloon.remove();
     }, 10000);
 }
 
-// tạo bóng bay liên tục
+// Tạo bóng bay liên tục
 setInterval(createBalloon, 800);
