@@ -14,17 +14,16 @@ const images = [
 ];
 
 const zone = document.getElementById("balloonZone");
-const BALLOON_SIZE = 150; // Kích thước nhỏ hơn để phù hợp với thiết bị di động
-let balloonCount = 0; // Biến theo dõi số lượng bóng bay
+const BALLOON_SIZE = 150;
 
-// Giới hạn tối đa bóng bay hiển thị cùng lúc
-const MAX_BALLOONS = 6; // Giảm số lượng bóng bay cùng lúc
-let lastBalloonTime = 0; // Thời gian tạo bóng bay cuối cùng (giới hạn tần suất tạo bóng bay)
-const MIN_INTERVAL = 2000; // Thời gian tạo bóng bay tối thiểu (2 giây)
+const MAX_BALLOONS = 6;
+const MIN_INTERVAL = 2000;
 
-// Tạo bóng bay mới
+let balloonCount = 0;
+let lastBalloonTime = 0;
+
+// Create balloon
 function createBalloon() {
-    // Kiểm tra số lượng bóng bay hiện tại
     if (balloonCount >= MAX_BALLOONS) return;
 
     const balloon = document.createElement("div");
@@ -44,40 +43,30 @@ function createBalloon() {
 
         balloon.appendChild(img);
         zone.appendChild(balloon);
-
-        // Tăng số lượng bóng bay đã tạo
         balloonCount++;
 
-        // Click vào bóng bay để phóng to ảnh
         balloon.onclick = () => zoomImage(src);
 
-        // Sau 13 giây, xóa bóng bay khỏi zone và giảm số lượng bóng bay
         setTimeout(() => {
             balloon.remove();
             balloonCount--;
-        }, 13000);
+        }, 12000);
     };
 }
 
-// Hàm kiểm tra thời gian tạo bóng bay và quyết định tạo bóng bay mới
-function checkAndCreateBalloon() {
+// Animation loop
+function animate() {
     const now = Date.now();
-    if (now - lastBalloonTime >= MIN_INTERVAL) {
+    if (now - lastBalloonTime > MIN_INTERVAL) {
         createBalloon();
         lastBalloonTime = now;
     }
+    requestAnimationFrame(animate);
 }
 
-// Sử dụng requestAnimationFrame để gọi hàm kiểm tra và tạo bóng bay
-function animateBalloon() {
-    checkAndCreateBalloon();
-    requestAnimationFrame(animateBalloon); // Tiếp tục gọi hàm này mỗi khung hình
-}
+animate();
 
-// Bắt đầu tạo bóng bay khi trang load
-animateBalloon();
-
-// Phóng to ảnh khi click vào bóng bay
+// Zoom image
 function zoomImage(src) {
     const overlay = document.createElement("div");
     overlay.className = "zoom";
