@@ -71,7 +71,7 @@ body {
     width: 140px;
     animation: flyUp linear forwards;
     cursor: pointer;
-    will-change: transform; /* GPU acceleration */
+    will-change: transform;
 }
 
 .balloon img {
@@ -93,7 +93,7 @@ body {
     }
 }
 
-/* Zoom */
+/* Zoom overlay */
 .zoom {
     position: fixed;
     inset: 0;
