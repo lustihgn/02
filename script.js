@@ -4,8 +4,8 @@ const ctx = canvas.getContext("2d");
 
 let w, h;
 function resize(){
-  w = canvas.width = canvas.offsetWidth;
-  h = canvas.height = canvas.offsetHeight;
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
 }
 window.addEventListener("resize", resize);
 resize();
@@ -33,13 +33,11 @@ function generate(){
     const center = Math.abs(p.x * k);
     if(Math.random() > Math.min(1, Math.pow(center / 1.0, 0.85))) continue;
 
-    const baseO = 0.25 + k * 0.55;
-
     particles.push({
       nx: p.x * k,
       ny: p.y * k,
       r: 0.028 + k * 0.085,
-      baseO,
+      baseO: 0.25 + k * 0.55,
       phase: Math.random() * Math.PI * 2,
       speed: 0.006 + Math.random() * 0.01
     });
@@ -61,7 +59,8 @@ function draw(now){
   ctx.save();
   ctx.translate(w/2, h/2);
 
-  ctx.scale(14.5 * beat, 14.5 * beat); // ✅ TO HƠN NHẸ
+  const scale = Math.min(w, h) * 0.024; // 👈 tim nhỏ vừa
+  ctx.scale(scale * beat, scale * beat);
 
   for(const p of particles){
     p.phase += p.speed;
@@ -80,7 +79,43 @@ function draw(now){
     ctx.fillStyle = "rgb(255,105,135)";
     ctx.fill();
   }
-
   ctx.restore();
 }
 requestAnimationFrame(draw);
+
+/* ================= ẢNH BAY ================= */
+const images = [
+  "anh1.jpg","anh2.jpg","anh3.jpg","anh4.jpg","anh5.jpg","anh6.jpg",
+  "anh7.jpg","anh8.jpg","anh9.jpg","anh10.jpg","anh11.jpg","anh12.jpg"
+];
+
+let index = 0;
+const photos = document.getElementById("photos");
+
+setInterval(() => {
+  const img = document.createElement("img");
+  img.src = images[index];
+  img.className = "photo";
+
+  img.style.left = Math.random() < 0.5
+    ? (2 + Math.random()*15) + "%"
+    : (83 + Math.random()*15) + "%";
+
+  img.style.animationDuration = (16 + Math.random()*4) + "s";
+
+  photos.appendChild(img);
+  setTimeout(() => img.remove(), 22000);
+
+  index = (index + 1) % images.length;
+}, 2200);
+
+/* ================= NHẠC – CHẠM MỚI PHÁT ================= */
+const bgm = document.getElementById("bgm");
+let started = false;
+
+document.addEventListener("click", () => {
+  if (!started) {
+    bgm.play();
+    started = true;
+  }
+});
