@@ -1,10 +1,10 @@
-const canvas = document.getElementById("canvas");
+const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
 
 function resizeCanvas() {
-  const dpr = window.devicePixelRatio || 1;
-  canvas.width = canvas.clientWidth * dpr;
-  canvas.height = canvas.clientHeight * dpr;
+  const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+  canvas.width = window.innerWidth * dpr;
+  canvas.height = window.innerHeight * dpr;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
@@ -16,11 +16,11 @@ window.addEventListener("resize", () => {
 
 resizeCanvas();
 
-/* ===== GIỚI HẠN FPS GIẢM LAG (KHÔNG ĐỤNG LOGIC TIM) ===== */
-let lastTime = 0;
-function limitFPS(time) {
-  requestAnimationFrame(limitFPS);
-  if (time - lastTime < 24) return; // ~40fps
-  lastTime = time;
+/* ===== GIỚI HẠN FPS NHẸ NHÀNG (KHÔNG ĐỤNG LOGIC TIM) ===== */
+let last = 0;
+function limiter(t) {
+  requestAnimationFrame(limiter);
+  if (t - last < 24) return; // ~40fps
+  last = t;
 }
-requestAnimationFrame(limitFPS);
+requestAnimationFrame(limiter);
