@@ -7,9 +7,10 @@
 body {
   background: #000;
   overflow: hidden;
-  font-family: sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
+/* ===== LAYOUT ===== */
 .container {
   display: flex;
   width: 100vw;
@@ -26,82 +27,83 @@ body {
 /* ===== CENTER ===== */
 .center {
   width: 50%;
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  z-index: 5;
+
+  /* 🔑 đẩy chữ cao hơn, tách khỏi tim */
+  justify-content: flex-start;
+  padding-top: 18vh;
+
+  position: relative;
+  z-index: 10;
 }
 
+/* ===== TEXT ===== */
 .center h1 {
   color: pink;
   font-size: 42px;
-  margin-bottom: 30px;
-  text-shadow: 0 0 10px pink;
-  z-index: 6;
+  margin-bottom: 60px;
+  text-shadow: 0 0 14px pink;
+  z-index: 11;
 }
 
-/* ===== HEART (SMALLER) ===== */
+/* ===== HEART (NHỎ) ===== */
 .heart {
-  width: 80px;
-  height: 80px;
+  width: 65px;
+  height: 65px;
   background: red;
   position: relative;
   transform: rotate(-45deg);
   animation: beat 1.2s infinite;
-  z-index: 4;
 }
 
 .heart::before,
 .heart::after {
   content: "";
-  width: 80px;
-  height: 80px;
+  width: 65px;
+  height: 65px;
   background: red;
   border-radius: 50%;
   position: absolute;
 }
 
 .heart::before {
-  top: -40px;
+  top: -32px;
   left: 0;
 }
 
 .heart::after {
-  left: 40px;
+  left: 32px;
   top: 0;
 }
 
 @keyframes beat {
-  0%, 100% { transform: rotate(-45deg) scale(1); }
+  0%,100% { transform: rotate(-45deg) scale(1); }
   50% { transform: rotate(-45deg) scale(1.15); }
 }
 
-/* ===== FLYING IMAGE ===== */
+/* ===== FLYING IMAGE (KHÔNG CẮT) ===== */
 .flying-img {
   position: absolute;
-  width: 175px; /* TO GẤP ~1.75 */
+  bottom: -300px;
+
+  width: 175px;       /* ~1.75x */
+  height: auto;       /* 🔑 giữ tỷ lệ */
+  object-fit: contain;/* 🔑 KHÔNG CẮT */
+
   border-radius: 14px;
-  opacity: 0;
-  animation: flyUp 10s linear forwards;
+  background: #000;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.5);
+
+  animation: flyUp 12s linear forwards;
+  pointer-events: none;
 }
 
 @keyframes flyUp {
-  0% {
-    bottom: -220px;
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    bottom: 110%;
-    opacity: 0;
-  }
+  from { transform: translateY(0); opacity: 0; }
+  10% { opacity: 1; }
+  to   { transform: translateY(-170vh); opacity: 1; }
 }
 
 /* ===== MOBILE ===== */
@@ -112,27 +114,31 @@ body {
 
   .center {
     width: 100%;
+    padding-top: 14vh;
   }
 
   .center h1 {
     font-size: 28px;
+    margin-bottom: 45px;
   }
 
   .heart {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
   }
 
   .heart::before,
   .heart::after {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
   }
 
-  .heart::before { top: -30px; }
-  .heart::after { left: 30px; }
+  .heart::before { top: -25px; }
+  .heart::after { left: 25px; }
 
   .flying-img {
     width: 140px;
+    height: auto;
+    object-fit: contain;
   }
 }
