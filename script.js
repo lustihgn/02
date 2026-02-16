@@ -1,11 +1,10 @@
-// ===== DANH SÁCH ẢNH =====
 const images = [
   "anh1.jpg","anh2.jpg","anh3.jpg","anh4.jpg",
   "anh5.jpg","anh6.jpg","anh7.jpg","anh8.jpg",
   "anh9.jpg","anh10.jpg","anh11.jpg","anh12.jpg"
 ];
 
-// ===== CHỐNG LẶP NHANH =====
+/* ===== CHỐNG LẶP ẢNH NHANH ===== */
 let recent = [];
 const MIN_GAP = 8;
 
@@ -20,15 +19,14 @@ function getNextImage() {
   return img;
 }
 
-// ===== GIỚI HẠN SỐ ẢNH CÙNG LÚC =====
-const MAX_IMAGES = 5;   // 👉 giảm / tăng tại đây
-const INTERVAL = 4000; // 👉 4 giây mới xuất hiện 1 ảnh
+/* ===== GIẢM RỐI ===== */
+const MAX_IMAGES = 4;     // số ảnh tối đa cùng lúc
+const INTERVAL = 4500;   // 4.5 giây mới xuất hiện ảnh mới
 
 let sideToggle = true;
 
 function createImage() {
-  const total = document.querySelectorAll(".flying-img").length;
-  if (total >= MAX_IMAGES) return;
+  if (document.querySelectorAll(".flying-img").length >= MAX_IMAGES) return;
 
   const side = document.querySelector(sideToggle ? ".left" : ".right");
   sideToggle = !sideToggle;
@@ -37,18 +35,13 @@ function createImage() {
   img.src = getNextImage();
   img.className = "flying-img";
 
-  // Không sát rìa
   const padding = 30;
-  const maxWidth = side.clientWidth - 200;
-  img.style.left = padding + Math.random() * maxWidth + "px";
+  const maxX = side.clientWidth - 200;
+  img.style.left = padding + Math.random() * maxX + "px";
 
   side.appendChild(img);
 
-  // Chỉ xóa khi animation kết thúc
-  img.addEventListener("animationend", () => {
-    img.remove();
-  });
+  img.addEventListener("animationend", () => img.remove());
 }
 
-// ===== CHẠY =====
 setInterval(createImage, INTERVAL);
