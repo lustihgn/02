@@ -1,144 +1,108 @@
+/* ===== RESET ===== */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* ===== BODY ===== */
 body {
-  background: #000;
+  background: black;
+  width: 100vw;
+  height: 100vh;
   overflow: hidden;
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* ===== LAYOUT ===== */
-.container {
-  display: flex;
-  width: 100vw;
-  height: 100vh;
-}
+/* ===== APP WRAPPER ===== */
+#app {
+  width: 100%;
+  height: 100%;
 
-/* ===== SIDES ===== */
-.side {
-  width: 25%;
-  position: relative;
-  overflow: hidden;
-}
-
-/* ===== CENTER ===== */
-.center {
-  width: 50%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
 
-  /* 🔑 đẩy chữ cao hơn, tách khỏi tim */
-  justify-content: flex-start;
-  padding-top: 18vh;
-
   position: relative;
-  z-index: 10;
 }
 
 /* ===== TEXT ===== */
-.center h1 {
-  color: pink;
-  font-size: 42px;
-  margin-bottom: 60px;
-  text-shadow: 0 0 14px pink;
-  z-index: 11;
+.text {
+  color: #ffb6c1;
+  font-size: clamp(20px, 4vw, 42px);
+  letter-spacing: 4px;
+
+  margin-bottom: 40px;
+  text-align: center;
+
+  text-shadow: 0 0 12px rgba(255,182,193,0.8);
 }
 
-/* ===== HEART (NHỎ) ===== */
+/* ===== HEART ===== */
 .heart {
-  width: 65px;
-  height: 65px;
+  width: 70px;
+  height: 70px;
   background: red;
-  position: relative;
   transform: rotate(-45deg);
-  animation: beat 1.2s infinite;
+  position: relative;
+  animation: pulse 1.2s infinite;
 }
 
 .heart::before,
 .heart::after {
   content: "";
-  width: 65px;
-  height: 65px;
+  width: 70px;
+  height: 70px;
   background: red;
   border-radius: 50%;
   position: absolute;
 }
 
 .heart::before {
-  top: -32px;
+  top: -35px;
   left: 0;
 }
 
 .heart::after {
-  left: 32px;
+  left: 35px;
   top: 0;
 }
 
-@keyframes beat {
-  0%,100% { transform: rotate(-45deg) scale(1); }
-  50% { transform: rotate(-45deg) scale(1.15); }
+/* ===== HEART ANIMATION ===== */
+@keyframes pulse {
+  0% { transform: scale(1) rotate(-45deg); }
+  50% { transform: scale(1.15) rotate(-45deg); }
+  100% { transform: scale(1) rotate(-45deg); }
 }
 
-/* ===== FLYING IMAGE (KHÔNG CẮT) ===== */
-.flying-img {
-  position: absolute;
-  bottom: -300px;
+/* ============================= */
+/* ===== LANDSCAPE LAYOUT ===== */
+/* ============================= */
 
-  width: 175px;       /* ~1.75x */
-  height: auto;       /* 🔑 giữ tỷ lệ */
-  object-fit: contain;/* 🔑 KHÔNG CẮT */
+/* Điện thoại dọc → vẫn hiển thị NGANG */
+@media (orientation: portrait) {
+  #app {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 60px;
+  }
 
-  border-radius: 14px;
-  background: #000;
-  box-shadow: 0 10px 28px rgba(0,0,0,0.5);
-
-  animation: flyUp 12s linear forwards;
-  pointer-events: none;
+  .text {
+    margin-bottom: 0;
+    text-align: right;
+  }
 }
 
-@keyframes flyUp {
-  from { transform: translateY(0); opacity: 0; }
-  10% { opacity: 1; }
-  to   { transform: translateY(-170vh); opacity: 1; }
-}
-
-/* ===== MOBILE ===== */
-@media (max-width: 768px) {
-  .side {
-    display: none;
+/* Màn hình ngang (chuẩn) */
+@media (orientation: landscape) {
+  #app {
+    flex-direction: row;
+    gap: 80px;
   }
 
-  .center {
-    width: 100%;
-    padding-top: 14vh;
-  }
-
-  .center h1 {
-    font-size: 28px;
-    margin-bottom: 45px;
-  }
-
-  .heart {
-    width: 50px;
-    height: 50px;
-  }
-
-  .heart::before,
-  .heart::after {
-    width: 50px;
-    height: 50px;
-  }
-
-  .heart::before { top: -25px; }
-  .heart::after { left: 25px; }
-
-  .flying-img {
-    width: 140px;
-    height: auto;
-    object-fit: contain;
+  .text {
+    text-align: right;
   }
 }
