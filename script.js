@@ -110,3 +110,18 @@ setInterval(() => {
 
   index = (index + 1) % images.length;
 }, 2200); // ⏱️ nhanh hơn
+/* ================= NHẠC NỀN ================= */
+const bgm = document.getElementById("bgm");
+let started = false;
+
+function startMusic() {
+  if (started) return;
+  started = true;
+
+  bgm.volume = 0.7;
+  bgm.loop = true;
+  bgm.play().catch(() => {});
+}
+
+document.addEventListener("touchstart", startMusic, { once: true });
+document.addEventListener("click", startMusic, { once: true });
