@@ -3,12 +3,14 @@ const ctx = canvas.getContext("2d");
 
 let w, h;
 function resize(){
-  w = canvas.width = window.innerWidth;
-  h = canvas.height = window.innerHeight;
+  // ⚠️ ĐẢO WIDTH / HEIGHT VÌ ĐÃ XOAY
+  w = canvas.width = window.innerHeight;
+  h = canvas.height = window.innerWidth;
 }
 window.addEventListener("resize", resize);
 resize();
 
+/* ===== TRÁI TIM – GIỮ NGUYÊN ===== */
 const COUNT = 6000;
 const particles = [];
 
@@ -30,7 +32,7 @@ function generate(){
     const p = heart(a);
 
     const center = Math.abs(p.x * k);
-    if(Math.random() > Math.min(1, Math.pow(center / 1.0, 0.85))) continue;
+    if(Math.random() > Math.min(1, Math.pow(center, 0.85))) continue;
 
     particles.push({
       nx: p.x * k,
@@ -58,8 +60,9 @@ function draw(now){
   ctx.save();
   ctx.translate(w/2, h/2);
 
-  const baseScale = Math.min(w, h) * 0.035; // ✅ KHÓA KÍCH THƯỚC
-  ctx.scale(baseScale * beat, baseScale * beat);
+  // ✅ SCALE THEO KHUNG XOAY
+  const scale = Math.min(w, h) * 0.032;
+  ctx.scale(scale * beat, scale * beat);
 
   for(const p of particles){
     p.phase += p.speed;
@@ -82,11 +85,10 @@ function draw(now){
 }
 requestAnimationFrame(draw);
 
-/* ===== PHOTOS ===== */
+/* ===== ẢNH BAY – 12 ẢNH ===== */
 const images = [
-  "anh1.jpg","anh2.jpg","anh3.jpg","anh4.jpg","anh5.jpg",
-  "anh6.jpg","anh7.jpg","anh8.jpg","anh9.jpg","anh10.jpg",
-  "anh11.jpg","anh12.jpg"
+  "anh1.jpg","anh2.jpg","anh3.jpg","anh4.jpg","anh5.jpg","anh6.jpg",
+  "anh7.jpg","anh8.jpg","anh9.jpg","anh10.jpg","anh11.jpg","anh12.jpg"
 ];
 
 let i = 0;
@@ -96,12 +98,10 @@ setInterval(() => {
   const img = document.createElement("img");
   img.src = images[i];
   img.className = "photo";
-
   img.style.left = (10 + Math.random()*70) + "%";
   img.style.animationDuration = (18 + Math.random()*6) + "s";
 
   photos.appendChild(img);
   setTimeout(() => img.remove(), 26000);
-
   i = (i + 1) % images.length;
 }, 4000);
