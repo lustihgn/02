@@ -1,108 +1,78 @@
-/* ===== RESET ===== */
-* {
+html, body {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-}
-
-/* ===== BODY ===== */
-body {
   background: black;
-  width: 100vw;
-  height: 100vh;
   overflow: hidden;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-/* ===== APP WRAPPER ===== */
-#app {
   width: 100%;
   height: 100%;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  position: relative;
 }
 
-/* ===== TEXT ===== */
-.text {
-  color: #ffb6c1;
-  font-size: clamp(20px, 4vw, 42px);
-  letter-spacing: 4px;
-
-  margin-bottom: 40px;
-  text-align: center;
-
-  text-shadow: 0 0 12px rgba(255,182,193,0.8);
-}
-
-/* ===== HEART ===== */
-.heart {
-  width: 70px;
-  height: 70px;
-  background: red;
-  transform: rotate(-45deg);
-  position: relative;
-  animation: pulse 1.2s infinite;
-}
-
-.heart::before,
-.heart::after {
-  content: "";
-  width: 70px;
-  height: 70px;
-  background: red;
-  border-radius: 50%;
-  position: absolute;
-}
-
-.heart::before {
-  top: -35px;
-  left: 0;
-}
-
-.heart::after {
-  left: 35px;
+/* XOAY TOÀN BỘ NỘI DUNG */
+#rotate-wrapper {
+  position: fixed;
+  width: 100vh;
+  height: 100vw;
   top: 0;
+  left: 0;
+  transform: rotate(90deg) translateY(-100%);
+  transform-origin: top left;
 }
 
-/* ===== HEART ANIMATION ===== */
-@keyframes pulse {
-  0% { transform: scale(1) rotate(-45deg); }
-  50% { transform: scale(1.15) rotate(-45deg); }
-  100% { transform: scale(1) rotate(-45deg); }
+/* SCENE CHÍNH */
+#scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: black;
+  overflow: visible;
 }
 
-/* ============================= */
-/* ===== LANDSCAPE LAYOUT ===== */
-/* ============================= */
-
-/* Điện thoại dọc → vẫn hiển thị NGANG */
-@media (orientation: portrait) {
-  #app {
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 60px;
-  }
-
-  .text {
-    margin-bottom: 0;
-    text-align: right;
-  }
+/* TEXT */
+#text {
+  position: absolute;
+  top: 10%;
+  width: 100%;
+  text-align: center;
+  font-size: 26px;
+  color: pink;
+  text-shadow: 0 0 12px rgba(255,180,200,0.8);
+  z-index: 3;
 }
 
-/* Màn hình ngang (chuẩn) */
-@media (orientation: landscape) {
-  #app {
-    flex-direction: row;
-    gap: 80px;
-  }
+/* CANVAS TIM */
+canvas {
+  position: absolute;
+  inset: -15%; /* 👉 NỚI RỘNG để không bị cắt khi tim đập */
+  width: 130%;
+  height: 130%;
+  z-index: 2;
+  pointer-events: none;
+}
 
-  .text {
-    text-align: right;
+/* ẢNH BAY */
+#photos {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.photo {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  border-radius: 14px;
+  object-fit: contain; /* KHÔNG BỊ CẮT ẢNH */
+  animation: flyUp linear forwards;
+}
+
+@keyframes flyUp {
+  from {
+    transform: translateY(110%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(-140%);
+    opacity: 1;
   }
 }
