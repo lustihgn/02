@@ -1,4 +1,3 @@
-/* ================= TRÁI TIM – GIỮ NGUYÊN ================= */
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
 
@@ -58,7 +57,9 @@ function draw(now){
 
   ctx.save();
   ctx.translate(w/2, h/2);
-  ctx.scale(13 * beat, 13 * beat);
+
+  const baseScale = Math.min(w, h) * 0.035; // ✅ KHÓA KÍCH THƯỚC
+  ctx.scale(baseScale * beat, baseScale * beat);
 
   for(const p of particles){
     p.phase += p.speed;
@@ -81,24 +82,26 @@ function draw(now){
 }
 requestAnimationFrame(draw);
 
-/* ================= ẢNH BAY – TỐI ƯU ================= */
+/* ===== PHOTOS ===== */
 const images = [
-  "anh1.jpg","anh2.jpg","anh3.jpg","anh4.jpg","anh5.jpg"
+  "anh1.jpg","anh2.jpg","anh3.jpg","anh4.jpg","anh5.jpg",
+  "anh6.jpg","anh7.jpg","anh8.jpg","anh9.jpg","anh10.jpg",
+  "anh11.jpg","anh12.jpg"
 ];
 
-let index = 0;
+let i = 0;
 const photos = document.getElementById("photos");
 
 setInterval(() => {
   const img = document.createElement("img");
-  img.src = images[index];
+  img.src = images[i];
   img.className = "photo";
 
-  img.style.left = Math.random() * 80 + "%";
-  img.style.animationDuration = (18 + Math.random() * 6) + "s";
+  img.style.left = (10 + Math.random()*70) + "%";
+  img.style.animationDuration = (18 + Math.random()*6) + "s";
 
   photos.appendChild(img);
   setTimeout(() => img.remove(), 26000);
 
-  index = (index + 1) % images.length;
-}, 3500);
+  i = (i + 1) % images.length;
+}, 4000);
