@@ -1,78 +1,54 @@
-html, body {
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
   background: black;
   overflow: hidden;
-  width: 100%;
-  height: 100%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont;
 }
 
-/* XOAY TOÀN BỘ NỘI DUNG */
-#rotate-wrapper {
+/* ===== GIẢ LANDSCAPE ===== */
+#viewport {
   position: fixed;
+  top: 50%;
+  left: 50%;
+
   width: 100vh;
   height: 100vw;
-  top: 0;
-  left: 0;
-  transform: rotate(90deg) translateY(-100%);
-  transform-origin: top left;
+
+  transform:
+    translate(-50%, -50%)
+    rotate(90deg)
+    scale(0.92);
+
+  transform-origin: center center;
+  will-change: transform;
 }
 
-/* SCENE CHÍNH */
-#scene {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background: black;
-  overflow: visible;
-}
-
-/* TEXT */
-#text {
+/* ===== TEXT ===== */
+#title {
   position: absolute;
-  top: 10%;
-  width: 100%;
-  text-align: center;
-  font-size: 26px;
-  color: pink;
-  text-shadow: 0 0 12px rgba(255,180,200,0.8);
-  z-index: 3;
+  top: 8%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ff9dbb;
+  font-size: 22px;
+  letter-spacing: 2px;
+  text-shadow: 0 0 8px rgba(255, 150, 190, 0.8);
+  pointer-events: none;
+  z-index: 10;
 }
 
-/* CANVAS TIM */
+/* ===== CANVAS ===== */
 canvas {
   position: absolute;
-  inset: -15%; /* 👉 NỚI RỘNG để không bị cắt khi tim đập */
-  width: 130%;
-  height: 130%;
-  z-index: 2;
-  pointer-events: none;
-}
-
-/* ẢNH BAY */
-#photos {
-  position: absolute;
   inset: 0;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.photo {
-  position: absolute;
-  width: 140px;
-  height: 140px;
-  border-radius: 14px;
-  object-fit: contain; /* KHÔNG BỊ CẮT ẢNH */
-  animation: flyUp linear forwards;
-}
-
-@keyframes flyUp {
-  from {
-    transform: translateY(110%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(-140%);
-    opacity: 1;
-  }
+  width: 100%;
+  height: 100%;
+  display: block;
 }
