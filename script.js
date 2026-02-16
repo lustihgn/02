@@ -10,7 +10,7 @@ function resize(){
 window.addEventListener("resize", resize);
 resize();
 
-const COUNT = 6000;
+const COUNT = 5200; // giảm nhẹ cho đỡ lag
 const particles = [];
 
 function heart(t){
@@ -45,38 +45,27 @@ function generate(){
 }
 generate();
 
-let lastTime = 0;
-
-function draw(now){
+let last = 0;
+function draw(t){
   requestAnimationFrame(draw);
-  if(now - lastTime < 16) return;
-  lastTime = now;
+  if(t - last < 16) return;
+  last = t;
 
   ctx.clearRect(0,0,w,h);
 
-  const t = now * 0.0025;
-  const beat = 1 + Math.sin(t) * 0.03 + Math.sin(t*2) * 0.012;
-
+  const beat = 1 + Math.sin(t * 0.0025) * 0.03;
   ctx.save();
   ctx.translate(w/2, h/2);
 
-  const scale = Math.min(w, h) * 0.027; // ✅ vừa khung
+  /* 👇 GIẢM KÍCH THƯỚC TRÁI TIM */
+  const scale = Math.min(w, h) * 0.021;
   ctx.scale(scale * beat, scale * beat);
 
   for(const p of particles){
     p.phase += p.speed;
-    const sparkle = (Math.sin(p.phase) + 1) * 0.12;
-    const pulse = (beat - 1) * 0.6;
-
-    ctx.globalAlpha = p.baseO + sparkle;
+    ctx.globalAlpha = p.baseO + (Math.sin(p.phase)+1)*0.12;
     ctx.beginPath();
-    ctx.arc(
-      p.nx + p.nx * pulse,
-      p.ny + p.ny * pulse,
-      p.r,
-      0,
-      Math.PI * 2
-    );
+    ctx.arc(p.nx, p.ny, p.r, 0, Math.PI*2);
     ctx.fillStyle = "rgb(255,105,135)";
     ctx.fill();
   }
@@ -84,44 +73,39 @@ function draw(now){
 }
 requestAnimationFrame(draw);
 
-/* ================= ẢNH BAY – NHANH HƠN ================= */
+/* ================= ẢNH BAY ================= */
 const images = [
   "anh1.jpg","anh2.jpg","anh3.jpg","anh4.jpg","anh5.jpg","anh6.jpg",
   "anh7.jpg","anh8.jpg","anh9.jpg","anh10.jpg","anh11.jpg","anh12.jpg"
 ];
 
-let index = 0;
+let i = 0;
 const photos = document.getElementById("photos");
 
 setInterval(() => {
   const img = document.createElement("img");
-  img.src = images[index];
+  img.src = images[i];
   img.className = "photo";
 
-  // 👉 sát rìa trái / phải
+  /* 👇 SÁT RÌA */
   img.style.left = Math.random() < 0.5
-    ? (2 + Math.random()*15) + "%"
-    : (83 + Math.random()*15) + "%";
+    ? (1 + Math.random()*8) + "%"
+    : (91 + Math.random()*8) + "%";
 
-  img.style.animationDuration = (14 + Math.random()*4) + "s";
-
+  img.style.animationDuration = (12 + Math.random()*3) + "s";
   photos.appendChild(img);
-  setTimeout(() => img.remove(), 20000);
 
-  index = (index + 1) % images.length;
-}, 2200); // ⏱️ nhanh hơn
-/* ================= NHẠC NỀN ================= */
-const bgm = document.getElementById("bgm");
-let started = false;
+  setTimeout(() => img.remove(), 16000);
+  i = (i + 1) % images.length;
+}, 1800);
 
-function startMusic() {
-  if (started) return;
-  started = true;
+/* ================= NHẠC – CHẠM ĐỂ PHÁT ================= */
+const music = document.getElementById("music");
+let played = false;
 
-  bgm.volume = 0.7;
-  bgm.loop = true;
-  bgm.play().catch(() => {});
-}
-
-document.addEventListener("touchstart", startMusic, { once: true });
-document.addEventListener("click", startMusic, { once: true });
+document.body.addEventListener("click", () => {
+  if (!played) {
+    music.play();
+    played = true;
+  }
+}, { once: true });
