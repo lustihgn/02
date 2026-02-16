@@ -11,13 +11,12 @@ html, body {
   position: relative;
   width: 100%;
   height: 100%;
-  background: black;
 }
 
 /* TEXT */
 #text {
   position: absolute;
-  top: 8%;
+  top: 6%;
   width: 100%;
   text-align: center;
   font-size: 26px;
@@ -26,7 +25,7 @@ html, body {
   z-index: 3;
 }
 
-/* CANVAS TRÁI TIM */
+/* CANVAS */
 canvas {
   position: absolute;
   inset: 0;
@@ -46,8 +45,8 @@ canvas {
 
 .photo {
   position: absolute;
-  width: 95px;
-  height: 95px;
+  width: 82px;
+  height: 82px;
   border-radius: 14px;
   object-fit: cover;
   opacity: 0.85;
