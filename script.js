@@ -1,9 +1,9 @@
-/* ================= TRÁI TIM – GIỮ NGUYÊN ================= */
+/* ================= TRÁI TIM ================= */
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
 
 let w, h;
-function resize(){
+function resize() {
   w = canvas.width = window.innerWidth;
   h = canvas.height = window.innerHeight;
 }
@@ -13,25 +13,25 @@ resize();
 const COUNT = 6000;
 const particles = [];
 
-function heart(t){
+function heart(t) {
   return {
-    x: 16 * Math.sin(t)**3,
-    y: -(13*Math.cos(t)
-        - 5*Math.cos(2*t)
-        - 2*Math.cos(3*t)
-        - Math.cos(4*t))
+    x: 16 * Math.sin(t) ** 3,
+    y: -(13 * Math.cos(t)
+      - 5 * Math.cos(2 * t)
+      - 2 * Math.cos(3 * t)
+      - Math.cos(4 * t))
   };
 }
 
-function generate(){
+function generate() {
   particles.length = 0;
-  while(particles.length < COUNT){
+  while (particles.length < COUNT) {
     const a = Math.random() * Math.PI * 2;
     const k = Math.pow(Math.random(), 0.35);
     const p = heart(a);
 
     const center = Math.abs(p.x * k);
-    if(Math.random() > Math.min(1, Math.pow(center / 1.0, 0.85))) continue;
+    if (Math.random() > Math.min(1, Math.pow(center / 1.0, 0.85))) continue;
 
     particles.push({
       nx: p.x * k,
@@ -46,23 +46,22 @@ function generate(){
 generate();
 
 let lastTime = 0;
-function draw(now){
+function draw(now) {
   requestAnimationFrame(draw);
-  if(now - lastTime < 16) return;
+  if (now - lastTime < 16) return;
   lastTime = now;
 
-  ctx.clearRect(0,0,w,h);
+  ctx.clearRect(0, 0, w, h);
 
   const t = now * 0.0025;
-  const beat = 1 + Math.sin(t) * 0.03 + Math.sin(t*2) * 0.012;
+  const beat = 1 + Math.sin(t) * 0.03 + Math.sin(t * 2) * 0.012;
 
   ctx.save();
-  ctx.translate(w/2, h/2);
-
-  const scale = Math.min(w, h) * 0.024; // 👈 tim nhỏ vừa
+  ctx.translate(w / 2, h / 2);
+  const scale = Math.min(w, h) * 0.024;
   ctx.scale(scale * beat, scale * beat);
 
-  for(const p of particles){
+  for (const p of particles) {
     p.phase += p.speed;
     const sparkle = (Math.sin(p.phase) + 1) * 0.12;
     const pulse = (beat - 1) * 0.6;
@@ -98,18 +97,18 @@ setInterval(() => {
   img.className = "photo";
 
   img.style.left = Math.random() < 0.5
-    ? (2 + Math.random()*15) + "%"
-    : (83 + Math.random()*15) + "%";
+    ? (5 + Math.random() * 10) + "%"
+    : (85 + Math.random() * 10) + "%";
 
-  img.style.animationDuration = (16 + Math.random()*4) + "s";
+  img.style.animationDuration = (18 + Math.random() * 4) + "s";
 
   photos.appendChild(img);
   setTimeout(() => img.remove(), 22000);
 
   index = (index + 1) % images.length;
-}, 2200);
+}, 3000);
 
-/* ================= NHẠC – CHẠM MỚI PHÁT ================= */
+/* ================= NHẠC ================= */
 const bgm = document.getElementById("bgm");
 let started = false;
 
