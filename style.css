@@ -1,71 +1,124 @@
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  background: black;
-  overflow: hidden;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/* SCENE */
+body {
+    height: 100vh;
+    overflow: hidden;
+    background: #000;
+    font-family: Arial, sans-serif;
+}
+
+/* ===== TUNNEL BACKGROUND ===== */
+#tunnel {
+    position: fixed;
+    inset: -35%;
+    background:
+        linear-gradient(rgba(255,255,255,0.22) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.22) 1px, transparent 1px);
+    background-size: 70px 70px;
+    animation: tunnelMove 26s linear infinite;
+}
+
+#tunnel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center,
+        rgba(0,0,0,1) 35%,
+        rgba(0,0,0,0.85) 55%,
+        rgba(0,0,0,0.55) 72%,
+        rgba(0,0,0,0.25) 88%
+    );
+}
+
+@keyframes tunnelMove {
+    0% {
+        transform: scale(1) translate(0,0);
+    }
+    100% {
+        transform: scale(1.35) translate(3%,3%);
+    }
+}
+
+/* ===== BUTTON ===== */
+#startBtn {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 16px 38px;
+    font-size: 18px;
+    border-radius: 30px;
+    border: none;
+    background: linear-gradient(135deg, hotpink, deeppink);
+    color: white;
+    cursor: pointer;
+    z-index: 10;
+}
+
+/* ===== SCENE ===== */
 #scene {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background: black;
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
 }
 
-/* CANVAS TRÁI TIM */
-canvas {
-  position: absolute;
-  top: 40%;              /* 👈 tim xuống thấp */
-  left: 0;
-  width: 100%;
-  height: 40%;
-  z-index: 3;
-  pointer-events: none;
-}
-
-/* TEXT */
-#text {
-  position: absolute;
-  bottom: 10%;
-  width: 100%;
-  text-align: center;
-  font-size: 26px;
-  color: pink;
-  text-shadow: 0 0 12px rgba(255,180,200,0.8);
-  z-index: 4;
-}
-
-/* ẢNH */
-#photos {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 35%;          /* 👈 chỉ chiếm phần dưới */
-  z-index: 1;
-  pointer-events: none;
-  overflow: hidden;     /* 👈 không bay lên tim */
-}
-
-.photo {
-  position: absolute;
-  width: 90px;
-  height: 90px;
-  border-radius: 14px;
-  object-fit: cover;
-  opacity: 0.85;
-  animation: flyUp linear forwards;
-}
-
-@keyframes flyUp {
-  from {
-    transform: translateY(120%);
+/* ===== HEART ===== */
+.heart {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    font-size: 190px;
+    transform: translate(-50%, -50%) scale(0);
     opacity: 0;
-  }
-  to {
-    transform: translateY(-60%); /* 👈 không chạm tim */
+    transition: 3.5s ease;
+}
+
+.heart.show {
+    transform: translate(-50%, -50%) scale(1);
     opacity: 1;
-  }
+}
+
+/* ===== TEXT ===== */
+.wish {
+    position: absolute;
+    color: #ffd6ff;
+    font-size: 26px;
+    font-weight: bold;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.45);
+    animation: flyOut 8s linear forwards;
+    text-shadow: 0 0 14px rgba(255,120,200,0.7);
+}
+
+/* ===== IMAGE ===== */
+.fly-img {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 18px;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+    animation: flyOut 8.5s linear forwards;
+}
+
+/* ===== SHARED ANIMATION ===== */
+@keyframes flyOut {
+    0% {
+        opacity: 0;
+        transform: translate(var(--sx), var(--sy)) scale(0.5);
+    }
+    15% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(var(--ex), var(--ey)) scale(1);
+    }
 }
