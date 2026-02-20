@@ -9,116 +9,84 @@ body {
     overflow: hidden;
     background: #000;
     font-family: Arial, sans-serif;
+    perspective: 800px;
 }
 
 /* ===== TUNNEL BACKGROUND ===== */
-#tunnel {
+.tunnel {
     position: fixed;
-    inset: -35%;
+    inset: -50%;
     background:
-        linear-gradient(rgba(255,255,255,0.22) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.22) 1px, transparent 1px);
-    background-size: 70px 70px;
-    animation: tunnelMove 26s linear infinite;
-}
-
-#tunnel::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at center,
-        rgba(0,0,0,1) 35%,
-        rgba(0,0,0,0.85) 55%,
-        rgba(0,0,0,0.55) 72%,
-        rgba(0,0,0,0.25) 88%
-    );
+        linear-gradient(#ffffff33 1px, transparent 1px),
+        linear-gradient(90deg, #ffffff33 1px, transparent 1px);
+    background-size: 60px 60px;
+    transform-style: preserve-3d;
+    animation: tunnelMove 12s linear infinite;
+    opacity: 0.6;
 }
 
 @keyframes tunnelMove {
-    0% {
-        transform: scale(1) translate(0,0);
+    from {
+        transform: translateZ(0) scale(1);
     }
-    100% {
-        transform: scale(1.35) translate(3%,3%);
+    to {
+        transform: translateZ(600px) scale(1.6);
     }
 }
 
-/* ===== BUTTON ===== */
-#startBtn {
-    position: absolute;
+/* ===== CENTER HEART ===== */
+.center {
+    position: fixed;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    padding: 16px 38px;
-    font-size: 18px;
-    border-radius: 30px;
-    border: none;
-    background: linear-gradient(135deg, hotpink, deeppink);
-    color: white;
-    cursor: pointer;
-    z-index: 10;
+    font-size: 110px;
+    z-index: 5;
+    filter: drop-shadow(0 0 25px red);
 }
 
-/* ===== SCENE ===== */
-#scene {
+/* ===== FLYING OBJECTS ===== */
+#objects {
     position: fixed;
     inset: 0;
     pointer-events: none;
-    z-index: 5;
+    transform-style: preserve-3d;
 }
 
-/* ===== HEART ===== */
-.heart {
+.fly {
     position: absolute;
     left: 50%;
     top: 50%;
-    font-size: 190px;
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0;
-    transition: 3.5s ease;
+    transform-style: preserve-3d;
+    animation: flyThrough 6s linear forwards;
 }
 
-.heart.show {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-}
-
-/* ===== TEXT ===== */
-.wish {
-    position: absolute;
-    color: #ffd6ff;
-    font-size: 26px;
-    font-weight: bold;
-    white-space: nowrap;
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.45);
-    animation: flyOut 8s linear forwards;
-    text-shadow: 0 0 14px rgba(255,120,200,0.7);
-}
-
-/* ===== IMAGE ===== */
-.fly-img {
-    position: absolute;
-    width: 100px;
-    height: 100px;
+.fly img {
+    width: 120px;
+    height: 120px;
     object-fit: cover;
-    border-radius: 18px;
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.5);
-    animation: flyOut 8.5s linear forwards;
+    border-radius: 12px;
 }
 
-/* ===== SHARED ANIMATION ===== */
-@keyframes flyOut {
-    0% {
-        opacity: 0;
-        transform: translate(var(--sx), var(--sy)) scale(0.5);
+.fly span {
+    display: block;
+    margin-top: 10px;
+    text-align: center;
+    color: #fff;
+    font-size: 22px;
+    text-shadow: 0 0 12px hotpink;
+}
+
+/* ===== BAY XUYÊN QUA CAMERA ===== */
+@keyframes flyThrough {
+    from {
+        transform:
+            translate3d(var(--x), var(--y), -1200px)
+            scale(0.2);
     }
-    15% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-        transform: translate(var(--ex), var(--ey)) scale(1);
+    to {
+        transform:
+            translate3d(var(--x), var(--y), 600px)
+            scale(3);
     }
 }
