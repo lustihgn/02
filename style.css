@@ -1,92 +1,40 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+html, body {
+  margin: 0;
+  padding: 0;
+  background: black;
+  overflow: hidden;
 }
 
-body {
-    height: 100vh;
-    overflow: hidden;
-    background: #000;
-    font-family: Arial, sans-serif;
-    perspective: 800px;
+canvas {
+  display: block;
 }
 
-/* ===== TUNNEL BACKGROUND ===== */
-.tunnel {
-    position: fixed;
-    inset: -50%;
-    background:
-        linear-gradient(#ffffff33 1px, transparent 1px),
-        linear-gradient(90deg, #ffffff33 1px, transparent 1px);
-    background-size: 60px 60px;
-    transform-style: preserve-3d;
-    animation: tunnelMove 12s linear infinite;
-    opacity: 0.6;
+/* OPEN BUTTON */
+#openBtn {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 18px 40px;
+  font-size: 24px;
+  border: none;
+  border-radius: 40px;
+  background: #ff5c8a;
+  color: white;
+  cursor: pointer;
+  z-index: 10;
 }
 
-@keyframes tunnelMove {
-    from {
-        transform: translateZ(0) scale(1);
-    }
-    to {
-        transform: translateZ(600px) scale(1.6);
-    }
-}
-
-/* ===== CENTER HEART ===== */
-.center {
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 110px;
-    z-index: 5;
-    filter: drop-shadow(0 0 25px red);
-}
-
-/* ===== FLYING OBJECTS ===== */
-#objects {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    transform-style: preserve-3d;
-}
-
-.fly {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform-style: preserve-3d;
-    animation: flyThrough 6s linear forwards;
-}
-
-.fly img {
-    width: 120px;
-    height: 120px;
-    object-fit: cover;
-    border-radius: 12px;
-}
-
-.fly span {
-    display: block;
-    margin-top: 10px;
-    text-align: center;
-    color: #fff;
-    font-size: 22px;
-    text-shadow: 0 0 12px hotpink;
-}
-
-/* ===== BAY XUYÊN QUA CAMERA ===== */
-@keyframes flyThrough {
-    from {
-        transform:
-            translate3d(var(--x), var(--y), -1200px)
-            scale(0.2);
-    }
-    to {
-        transform:
-            translate3d(var(--x), var(--y), 600px)
-            scale(3);
-    }
+/* WISH TEXT */
+#wish {
+  position: fixed;
+  top: 8%;
+  width: 100%;
+  text-align: center;
+  font-size: 48px;
+  font-weight: bold;
+  color: #ff9bb8;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+  pointer-events: none;
 }
