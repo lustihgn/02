@@ -1,4 +1,4 @@
-/* ============ CANVAS ============ */
+/* ================== CANVAS ================== */
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
 
@@ -10,136 +10,146 @@ function resize() {
 window.addEventListener("resize", resize);
 resize();
 
-/* ============ HEART ============ */
-const COUNT = 5500;
-const particles = [];
+/* ================== HEART ================== */
+const HEART_COUNT = 5000;
+const heartParticles = [];
 
-function heart(t) {
+function heartShape(t) {
   return {
     x: 16 * Math.sin(t) ** 3,
     y: -(13 * Math.cos(t)
-      - 5 * Math.cos(2*t)
-      - 2 * Math.cos(3*t)
-      - Math.cos(4*t))
+      - 5 * Math.cos(2 * t)
+      - 2 * Math.cos(3 * t)
+      - Math.cos(4 * t))
   };
 }
 
-function createHeart() {
-  particles.length = 0;
-  while (particles.length < COUNT) {
-    const a = Math.random() * Math.PI * 2;
-    const k = Math.pow(Math.random(), 0.4);
-    const p = heart(a);
+// tạo hạt tim 1 lần
+for (let i = 0; i < HEART_COUNT; i++) {
+  const a = Math.random() * Math.PI * 2;
+  const k = Math.pow(Math.random(), 0.4);
+  const p = heartShape(a);
 
-    particles.push({
-      x: p.x * k,
-      y: p.y * k,
-      r: 0.03 + k * 0.08,
-      o: 0.3 + k * 0.6,
-      phase: Math.random() * Math.PI * 2,
-      speed: 0.01 + Math.random() * 0.01
-    });
-  }
-}
-createHeart();
-
-/* ============ BUILD ============ */
-let build = 0;
-
-/* ============ IMAGES ============ */
-const images = [];
-for (let i = 1; i <= 12; i++) {
-  const img = new Image();
-  img.src = `img/${i}.jpg`;
-  images.push(img);
-}
-
-const photos = [];
-
-function spawnPhoto() {
-  const img = images[Math.floor(Math.random() * images.length)];
-  photos.push({
-    img,
-    x: (Math.random() - 0.5) * 2,
-    y: (Math.random() - 0.5) * 2,
-    z: -3,
-    vz: 0.04 + Math.random() * 0.02,
-    r: Math.random() * Math.PI
+  heartParticles.push({
+    x: p.x * k,
+    y: p.y * k,
+    r: 0.03 + k * 0.07,
+    o: 0.4 + k * 0.6
   });
 }
 
-/* ============ LOOP ============ */
-function draw(t) {
+/* ================== LOAD IMAGES ================== */
+/* anh1.jpg → anh12.jpg (cùng cấp script.js) */
+const images = [];
+const TOTAL_IMAGES = 12;
+
+for (let i = 1; i <= TOTAL_IMAGES; i++) {
+  const img = new Image();
+  img.src = `anh${i}.jpg`;
+  images.push(img);
+}
+
+/* ================== PHOTO SYSTEM ================== */
+const photos = [];
+let photoIndex = 0;
+
+function spawnPhoto() {
+  const img = images[photoIndex % images.length];
+  photoIndex++;
+
+  const angle = Math.random() * Math.PI * 2;
+  const dist = 1.8;
+
+  photos.push({
+    img,
+    x: Math.cos(angle) * dist,
+    y: Math.sin(angle) * dist,
+    vx: -Math.cos(angle) * 0.012,
+    vy: -Math.sin(angle) * 0.012,
+    z: -3,
+    vz: 0.05,
+    life: 0
+  });
+}
+
+/* ================== MAIN LOOP ================== */
+let lastSpawn = 0;
+
+function draw(time) {
   requestAnimationFrame(draw);
   ctx.clearRect(0, 0, w, h);
 
-  build = Math.min(1, build + 0.005);
+  /* ---------- HEART (CỐ ĐỊNH) ---------- */
+  const beat = 1 + Math.sin(time * 0.002) * 0.04;
 
-  const beat = 1 + Math.sin(t * 0.002) * 0.04;
-
-  /* HEART */
   ctx.save();
   ctx.translate(w / 2, h / 2);
   ctx.scale(12 * beat, 12 * beat);
 
-  for (const p of particles) {
-    p.phase += p.speed;
-    ctx.globalAlpha = p.o * build;
+  for (const p of heartParticles) {
+    ctx.globalAlpha = p.o;
     ctx.beginPath();
-    ctx.arc(
-      p.x * build,
-      p.y * build,
-      p.r,
-      0,
-      Math.PI * 2
-    );
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
     ctx.fillStyle = "rgb(255,105,135)";
     ctx.fill();
   }
   ctx.restore();
 
-  /* PHOTOS */
-  if (photos.length < 6 && Math.random() < 0.03) {
+  /* ---------- SPAWN PHOTO (MỖI 1.5 GIÂY) ---------- */
+  if (time - lastSpawn > 1500 && photos.length < 3) {
     spawnPhoto();
+    lastSpawn = time;
   }
 
+  /* ---------- DRAW PHOTOS ---------- */
   ctx.save();
   ctx.translate(w / 2, h / 2);
+
   for (let i = photos.length - 1; i >= 0; i--) {
     const p = photos[i];
-    p.z += p.vz;
-    p.r += 0.01;
 
-    const s = 1 / (p.z * 0.2);
-    if (s > 4) {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.z += p.vz;
+    p.life++;
+
+    const scale = 1 / (p.z * 0.2);
+
+    // khi ảnh đủ lớn hoặc sống quá lâu thì xóa
+    if (scale > 3 || p.life > 420) {
       photos.splice(i, 1);
       continue;
     }
 
-    ctx.globalAlpha = Math.min(1, s);
-    ctx.save();
-    ctx.translate(p.x * w * s * 0.25, p.y * h * s * 0.25);
-    ctx.rotate(p.r);
+    ctx.globalAlpha = Math.min(1, scale);
     ctx.drawImage(
       p.img,
-      -p.img.width * s * 0.15,
-      -p.img.height * s * 0.15,
-      p.img.width * s * 0.3,
-      p.img.height * s * 0.3
+      p.x * w * scale * 0.25 - p.img.width * scale * 0.15,
+      p.y * h * scale * 0.25 - p.img.height * scale * 0.15,
+      p.img.width * scale * 0.3,
+      p.img.height * scale * 0.3
     );
-    ctx.restore();
   }
+
   ctx.restore();
 }
+
 requestAnimationFrame(draw);
 
-/* ============ AUTO START ============ */
+/* ================== TEXT & AUDIO ================== */
 const wish = document.getElementById("wish");
-setTimeout(() => wish.style.opacity = 1, 800);
+setTimeout(() => {
+  if (wish) wish.style.opacity = 1;
+}, 800);
 
-/* ============ iOS AUDIO FIX ============ */
+// iOS: chỉ phát nhạc khi có chạm
 const audio = document.getElementById("bgm");
-document.addEventListener("touchstart", () => {
-  audio.volume = 0.6;
-  audio.play().catch(()=>{});
-}, { once: true });
+document.addEventListener(
+  "touchstart",
+  () => {
+    if (!audio) return;
+    audio.volume = 0.6;
+    audio.play().catch(() => {});
+  },
+  { once: true }
+);
