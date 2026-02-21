@@ -1,4 +1,4 @@
-/* ================= BASIC ================= */
+/* ============ CANVAS ============ */
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
 
@@ -10,47 +10,43 @@ function resize() {
 window.addEventListener("resize", resize);
 resize();
 
-/* ================= HEART ================= */
-const COUNT = 6000;
+/* ============ HEART ============ */
+const COUNT = 5500;
 const particles = [];
 
 function heart(t) {
   return {
     x: 16 * Math.sin(t) ** 3,
     y: -(13 * Math.cos(t)
-      - 5 * Math.cos(2 * t)
-      - 2 * Math.cos(3 * t)
-      - Math.cos(4 * t))
+      - 5 * Math.cos(2*t)
+      - 2 * Math.cos(3*t)
+      - Math.cos(4*t))
   };
 }
 
-function generate() {
+function createHeart() {
   particles.length = 0;
   while (particles.length < COUNT) {
     const a = Math.random() * Math.PI * 2;
-    const k = Math.pow(Math.random(), 0.35);
+    const k = Math.pow(Math.random(), 0.4);
     const p = heart(a);
-    const center = Math.abs(p.x * k);
-    if (Math.random() > Math.min(1, Math.pow(center, 0.85))) continue;
 
     particles.push({
-      nx: p.x * k,
-      ny: p.y * k,
+      x: p.x * k,
+      y: p.y * k,
       r: 0.03 + k * 0.08,
-      baseO: 0.3 + k * 0.6,
+      o: 0.3 + k * 0.6,
       phase: Math.random() * Math.PI * 2,
-      speed: 0.006 + Math.random() * 0.01
+      speed: 0.01 + Math.random() * 0.01
     });
   }
 }
-generate();
+createHeart();
 
-/* ================= BUILD ================= */
+/* ============ BUILD ============ */
 let build = 0;
-let building = false;
-function ease(t) { return t * t * (3 - 2 * t); }
 
-/* ================= PHOTOS ================= */
+/* ============ IMAGES ============ */
 const images = [];
 for (let i = 1; i <= 12; i++) {
   const img = new Image();
@@ -58,58 +54,44 @@ for (let i = 1; i <= 12; i++) {
   images.push(img);
 }
 
-const photoParticles = [];
+const photos = [];
 
 function spawnPhoto() {
   const img = images[Math.floor(Math.random() * images.length)];
-  photoParticles.push({
+  photos.push({
     img,
-    x: (Math.random() < 0.5 ? -1 : 1) * (1.5 + Math.random()),
-    y: (Math.random() - 0.5) * 1.5,
-    z: -4,
+    x: (Math.random() - 0.5) * 2,
+    y: (Math.random() - 0.5) * 2,
+    z: -3,
     vz: 0.04 + Math.random() * 0.02,
-    rot: Math.random() * Math.PI
+    r: Math.random() * Math.PI
   });
 }
 
-/* ================= LOOP ================= */
-let last = 0;
-function draw(now) {
+/* ============ LOOP ============ */
+function draw(t) {
   requestAnimationFrame(draw);
-  if (now - last < 16) return;
-  last = now;
-
   ctx.clearRect(0, 0, w, h);
 
-  if (building) {
-    build += 0.004;
-    if (build >= 1) {
-      build = 1;
-      building = false;
-    }
-  }
+  build = Math.min(1, build + 0.005);
 
-  const a = ease(build);
-  const t = now * 0.0025;
-  const beat = 1 + Math.sin(t) * 0.03 + Math.sin(t * 2) * 0.015;
+  const beat = 1 + Math.sin(t * 0.002) * 0.04;
 
   /* HEART */
   ctx.save();
   ctx.translate(w / 2, h / 2);
-  ctx.scale(13 * beat, 13 * beat);
+  ctx.scale(12 * beat, 12 * beat);
 
   for (const p of particles) {
     p.phase += p.speed;
-    const sparkle = (Math.sin(p.phase) + 1) * 0.12;
-    const pulse = (beat - 1) * 0.6;
-
-    ctx.globalAlpha = (p.baseO + sparkle) * a;
+    ctx.globalAlpha = p.o * build;
     ctx.beginPath();
     ctx.arc(
-      p.nx * a + p.nx * pulse,
-      p.ny * a + p.ny * pulse,
+      p.x * build,
+      p.y * build,
       p.r,
-      0, Math.PI * 2
+      0,
+      Math.PI * 2
     );
     ctx.fillStyle = "rgb(255,105,135)";
     ctx.fill();
@@ -117,27 +99,27 @@ function draw(now) {
   ctx.restore();
 
   /* PHOTOS */
-  if (!building && photoParticles.length < 8 && Math.random() < 0.03) {
+  if (photos.length < 6 && Math.random() < 0.03) {
     spawnPhoto();
   }
 
   ctx.save();
   ctx.translate(w / 2, h / 2);
-  for (let i = photoParticles.length - 1; i >= 0; i--) {
-    const p = photoParticles[i];
+  for (let i = photos.length - 1; i >= 0; i--) {
+    const p = photos[i];
     p.z += p.vz;
-    p.rot += 0.01;
+    p.r += 0.01;
 
-    const s = 1 / (p.z * 0.18);
+    const s = 1 / (p.z * 0.2);
     if (s > 4) {
-      photoParticles.splice(i, 1);
+      photos.splice(i, 1);
       continue;
     }
 
     ctx.globalAlpha = Math.min(1, s);
     ctx.save();
     ctx.translate(p.x * w * s * 0.25, p.y * h * s * 0.25);
-    ctx.rotate(p.rot);
+    ctx.rotate(p.r);
     ctx.drawImage(
       p.img,
       -p.img.width * s * 0.15,
@@ -151,24 +133,13 @@ function draw(now) {
 }
 requestAnimationFrame(draw);
 
-/* ================= OPEN ================= */
-const openBtn = document.getElementById("openBtn");
+/* ============ AUTO START ============ */
 const wish = document.getElementById("wish");
+setTimeout(() => wish.style.opacity = 1, 800);
+
+/* ============ iOS AUDIO FIX ============ */
 const audio = document.getElementById("bgm");
-
-openBtn.onclick = () => {
-  openBtn.style.display = "none";
-  wish.style.opacity = 1;
-
-  building = true;
-  build = 0;
-
-  audio.volume = 0;
-  audio.play().catch(() => {});
-  let v = 0;
-  const fade = setInterval(() => {
-    v += 0.02;
-    audio.volume = Math.min(0.6, v);
-    if (v >= 0.6) clearInterval(fade);
-  }, 100);
-};
+document.addEventListener("touchstart", () => {
+  audio.volume = 0.6;
+  audio.play().catch(()=>{});
+}, { once: true });
