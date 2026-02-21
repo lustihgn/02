@@ -153,3 +153,58 @@ document.addEventListener(
   },
   { once: true }
 );
+/* ================== PHOTO FLY (KHÔNG ĐỤNG TIM) ================== */
+
+const flyImages = [];
+const flyList = [];
+const TOTAL_IMAGES = 12;
+
+// load ảnh anh1.jpg -> anh12.jpg
+for (let i = 1; i <= TOTAL_IMAGES; i++) {
+  const img = new Image();
+  img.src = `anh${i}.jpg`;
+  flyImages.push(img);
+}
+
+function createFlyImage() {
+  const img = flyImages[Math.floor(Math.random() * flyImages.length)];
+
+  flyList.push({
+    img,
+    x: Math.random() * window.innerWidth,
+    y: window.innerHeight + 100,
+    vx: (Math.random() - 0.5) * 1.2, // bay tứ phía
+    vy: -2 - Math.random() * 2,
+    size: 60 + Math.random() * 40,
+    life: 0,
+    maxLife: 300
+  });
+}
+
+// mỗi 800ms tạo 1 ảnh
+setInterval(() => {
+  if (flyList.length < 15) createFlyImage();
+}, 800);
+
+// VẼ ẢNH – GỌI TRONG LOOP DRAW CỦA BẠN
+function drawFlyImages(ctx) {
+  for (let i = flyList.length - 1; i >= 0; i--) {
+    const p = flyList[i];
+
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life++;
+
+    ctx.globalAlpha = 1 - p.life / p.maxLife;
+    ctx.drawImage(p.img, p.x, p.y, p.size, p.size);
+
+    if (
+      p.life > p.maxLife ||
+      p.y < -150 ||
+      p.x < -150 ||
+      p.x > window.innerWidth + 150
+    ) {
+      flyList.splice(i, 1);
+    }
+  }
+}
