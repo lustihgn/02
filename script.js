@@ -1,196 +1,97 @@
-/* ================== CANVAS ================== */
-const canvas = document.getElementById("c");
+/* ===================== CANVAS ===================== */
+const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-let w, h;
 function resize() {
-  w = canvas.width = window.innerWidth;
-  h = canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 }
-window.addEventListener("resize", resize);
 resize();
+window.addEventListener("resize", resize);
 
-/* ================== HEART ================== */
-const HEART_COUNT = 5000;
-const heartParticles = [];
+/* ===================== STATE ===================== */
+let started = false;
 
-function heartShape(t) {
-  return {
-    x: 16 * Math.sin(t) ** 3,
-    y: -(13 * Math.cos(t)
-      - 5 * Math.cos(2 * t)
-      - 2 * Math.cos(3 * t)
-      - Math.cos(4 * t))
-  };
+/* ===================== BUTTON ===================== */
+const startBtn = document.createElement("button");
+startBtn.innerText = "Bắt đầu";
+Object.assign(startBtn.style, {
+  position: "fixed",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  padding: "14px 32px",
+  fontSize: "18px",
+  borderRadius: "30px",
+  border: "none",
+  background: "#ff5f7e",
+  color: "#fff",
+  cursor: "pointer",
+  zIndex: 10,
+});
+document.body.appendChild(startBtn);
+
+startBtn.onclick = () => {
+  started = true;
+  startBtn.remove();
+  startPhotoFlow();
+};
+
+/* ===================== HEART (CỐ ĐỊNH) ===================== */
+function drawHeart() {
+  ctx.save();
+  ctx.translate(canvas.width / 2, canvas.height / 2);
+  ctx.scale(8, 8);
+
+  ctx.beginPath();
+  for (let t = 0; t < Math.PI * 2; t += 0.02) {
+    const x = 16 * Math.pow(Math.sin(t), 3);
+    const y =
+      -(13 * Math.cos(t) -
+        5 * Math.cos(2 * t) -
+        2 * Math.cos(3 * t) -
+        Math.cos(4 * t));
+    ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = "pink";
+  ctx.fill();
+  ctx.restore();
 }
 
-// tạo hạt tim 1 lần
-for (let i = 0; i < HEART_COUNT; i++) {
-  const a = Math.random() * Math.PI * 2;
-  const k = Math.pow(Math.random(), 0.4);
-  const p = heartShape(a);
-
-  heartParticles.push({
-    x: p.x * k,
-    y: p.y * k,
-    r: 0.03 + k * 0.07,
-    o: 0.4 + k * 0.6
-  });
-}
-
-/* ================== LOAD IMAGES ================== */
-/* anh1.jpg → anh12.jpg (cùng cấp script.js) */
+/* ===================== PHOTOS ===================== */
+const photos = [];
 const images = [];
-const TOTAL_IMAGES = 12;
 
-for (let i = 1; i <= TOTAL_IMAGES; i++) {
+for (let i = 1; i <= 12; i++) {
   const img = new Image();
   img.src = `anh${i}.jpg`;
   images.push(img);
 }
 
-/* ================== PHOTO SYSTEM ================== */
-const photos = [];
-let photoIndex = 0;
-
 function spawnPhoto() {
-  const img = images[photoIndex % images.length];
-  photoIndex++;
-
-  const angle = Math.random() * Math.PI * 2;
-  const dist = 1.8;
-
+  const img = images[Math.floor(Math.random() * images.length)];
   photos.push({
     img,
-    x: Math.cos(angle) * dist,
-    y: Math.sin(angle) * dist,
-    vx: -Math.cos(angle) * 0.012,
-    vy: -Math.sin(angle) * 0.012,
-    z: -3,
-    vz: 0.05,
-    life: 0
-  });
-}
-
-/* ================== MAIN LOOP ================== */
-let lastSpawn = 0;
-
-function draw(time) {
-  requestAnimationFrame(draw);
-  ctx.clearRect(0, 0, w, h);
-
-  /* ---------- HEART (CỐ ĐỊNH) ---------- */
-  const beat = 1 + Math.sin(time * 0.002) * 0.04;
-
-  ctx.save();
-  ctx.translate(w / 2, h / 2);
-  ctx.scale(12 * beat, 12 * beat);
-
-  for (const p of heartParticles) {
-    ctx.globalAlpha = p.o;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fillStyle = "rgb(255,105,135)";
-    ctx.fill();
-  }
-  ctx.restore();
-
-  /* ---------- SPAWN PHOTO (MỖI 1.5 GIÂY) ---------- */
-  if (time - lastSpawn > 1500 && photos.length < 3) {
-    spawnPhoto();
-    lastSpawn = time;
-  }
-
-  /* ---------- DRAW PHOTOS ---------- */
-  ctx.save();
-  ctx.translate(w / 2, h / 2);
-
-  for (let i = photos.length - 1; i >= 0; i--) {
-    const p = photos[i];
-
-    p.x += p.vx;
-    p.y += p.vy;
-    p.z += p.vz;
-    p.life++;
-
-    const scale = 1 / (p.z * 0.2);
-
-    // khi ảnh đủ lớn hoặc sống quá lâu thì xóa
-    if (scale > 3 || p.life > 420) {
-      photos.splice(i, 1);
-      continue;
-    }
-
-    ctx.globalAlpha = Math.min(1, scale);
-    ctx.drawImage(
-      p.img,
-      p.x * w * scale * 0.25 - p.img.width * scale * 0.15,
-      p.y * h * scale * 0.25 - p.img.height * scale * 0.15,
-      p.img.width * scale * 0.3,
-      p.img.height * scale * 0.3
-    );
-  }
-
-  ctx.restore();
-}
-
-requestAnimationFrame(draw);
-
-/* ================== TEXT & AUDIO ================== */
-const wish = document.getElementById("wish");
-setTimeout(() => {
-  if (wish) wish.style.opacity = 1;
-}, 800);
-
-// iOS: chỉ phát nhạc khi có chạm
-const audio = document.getElementById("bgm");
-document.addEventListener(
-  "touchstart",
-  () => {
-    if (!audio) return;
-    audio.volume = 0.6;
-    audio.play().catch(() => {});
-  },
-  { once: true }
-);
-/* ================== PHOTO FLY (KHÔNG ĐỤNG TIM) ================== */
-
-const flyImages = [];
-const flyList = [];
-const TOTAL_IMAGES = 12;
-
-// load ảnh anh1.jpg -> anh12.jpg
-for (let i = 1; i <= TOTAL_IMAGES; i++) {
-  const img = new Image();
-  img.src = `anh${i}.jpg`;
-  flyImages.push(img);
-}
-
-function createFlyImage() {
-  const img = flyImages[Math.floor(Math.random() * flyImages.length)];
-
-  flyList.push({
-    img,
-    x: Math.random() * window.innerWidth,
-    y: window.innerHeight + 100,
-    vx: (Math.random() - 0.5) * 1.2, // bay tứ phía
-    vy: -2 - Math.random() * 2,
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+    vx: (Math.random() - 0.5) * 4,
+    vy: (Math.random() - 0.5) * 4,
     size: 60 + Math.random() * 40,
     life: 0,
-    maxLife: 300
+    maxLife: 260,
   });
 }
 
-// mỗi 800ms tạo 1 ảnh
-setInterval(() => {
-  if (flyList.length < 15) createFlyImage();
-}, 800);
+function startPhotoFlow() {
+  setInterval(() => {
+    if (photos.length < 18) spawnPhoto();
+  }, 600);
+}
 
-// VẼ ẢNH – GỌI TRONG LOOP DRAW CỦA BẠN
-function drawFlyImages(ctx) {
-  for (let i = flyList.length - 1; i >= 0; i--) {
-    const p = flyList[i];
-
+function drawPhotos() {
+  for (let i = photos.length - 1; i >= 0; i--) {
+    const p = photos[i];
     p.x += p.vx;
     p.y += p.vy;
     p.life++;
@@ -200,11 +101,27 @@ function drawFlyImages(ctx) {
 
     if (
       p.life > p.maxLife ||
-      p.y < -150 ||
-      p.x < -150 ||
-      p.x > window.innerWidth + 150
+      p.x < -200 ||
+      p.y < -200 ||
+      p.x > canvas.width + 200 ||
+      p.y > canvas.height + 200
     ) {
-      flyList.splice(i, 1);
+      photos.splice(i, 1);
     }
   }
+  ctx.globalAlpha = 1;
 }
+
+/* ===================== LOOP ===================== */
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  if (started) {
+    drawHeart();   // ❤️ tim vẽ trước
+    drawPhotos();  // 🖼 ảnh bay xung quanh
+  }
+
+  requestAnimationFrame(animate);
+}
+
+animate();
