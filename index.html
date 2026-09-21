@@ -700,7 +700,7 @@ let cakeBuilding = false;
 // Giữ trái tim hoàn chỉnh lâu hơn trước khi các hạt bắt đầu tách ra
 setTimeout(() => {
   cakeBuilding = true;
-}, 12000);
+}, 15000);
 
 /* ===== HIỆU ỨNG XUẤT HIỆN ===== */
 let build = 0;
@@ -942,32 +942,58 @@ function draw(now){
         px += Math.sin(now*0.004 + p.target.phase) * (6 + p.target.drift*4) * flameFit;
         py += Math.sin(now*0.0025 + p.target.wobble) * 7 * flameFit;
       }
-      ctx.globalAlpha = p.target.baseO;
+      const cakeTwinkle = Math.max(0, Math.sin(now * 0.006 + p.target.phase * 2.1));
+      const cakeChaosX = Math.sin(now * 0.0017 + p.target.wobble) * 0.65;
+      const cakeChaosY = Math.cos(now * 0.0021 + p.target.phase) * 0.65;
+      ctx.globalAlpha = Math.min(1, p.target.baseO + cakeTwinkle * 0.18);
       ctx.beginPath();
-      ctx.arc(px, py, p.target.r * cakeScale, 0, Math.PI*2);
+      ctx.arc(px + cakeChaosX, py + cakeChaosY, p.target.r * cakeScale * (1 + cakeTwinkle * 0.25), 0, Math.PI*2);
       ctx.fillStyle = p.target.color;
       ctx.fill();
       continue;
     }
 
     p.phase += p.speed;
-    const sparkle = (Math.sin(p.phase) + 1) * 0.22;
-    const alpha = (p.baseO + sparkle) * a;
+          // Lấp lánh nhẹ hơn để trái tim không bị quá sáng.
+    const sparkle = (Math.sin(p.phase * 1.7 + now * 0.004) + 1) * 0.12;
+    const twinkle = Math.max(0, Math.sin(p.phase * 2.3 + now * 0.008));
+    const alpha = Math.min(0.78, (p.baseO * 0.78 + sparkle + twinkle * 0.08) * a);
 
     if(fp <= 0){
-      // vẫn thuộc về trái tim
+      // Các hạt dao động hỗn loạn nhẹ quanh vị trí gốc, vẫn giữ được hình tim.
       const pulse = (beat - 1) * 0.6;
       const x = p.nx * a;
       const y = p.ny * a;
       const dx = x * pulse;
       const dy = y * pulse;
+      const chaosX = Math.sin(now * 0.0022 + p.phase * 3.1) * (0.7 + p.r * 8);
+      const chaosY = Math.cos(now * 0.0018 + p.phase * 2.4) * (0.7 + p.r * 8);
+      const twinkleSize = 1 + twinkle * 0.55;
 
       // Các vùng nhiều hạt chồng lên nhau sẽ cộng sáng tự nhiên.
       ctx.globalAlpha = alpha;
       ctx.beginPath();
-      ctx.arc(heartOffsetX + (x+dx)*scaleAmt, heartOffsetY + (y+dy)*scaleAmt, p.r*scaleAmt, 0, Math.PI*2);
+      ctx.arc(
+        heartOffsetX + (x + dx) * scaleAmt + chaosX,
+        heartOffsetY + (y + dy) * scaleAmt + chaosY,
+        p.r * scaleAmt * twinkleSize,
+        0, Math.PI * 2
+      );
       ctx.fillStyle = p.colorStr;
       ctx.fill();
+
+      // Một số hạt lóe sáng thành tia nhỏ, với cường độ dịu hơn.
+      if(twinkle > 0.96){
+        ctx.globalAlpha = (twinkle - 0.96) * 4;
+        ctx.strokeStyle = "rgba(255, 235, 245, 0.65)";
+        ctx.lineWidth = 0.7;
+        ctx.beginPath();
+        ctx.moveTo(heartOffsetX + (x + dx) * scaleAmt + chaosX - 3, heartOffsetY + (y + dy) * scaleAmt + chaosY);
+        ctx.lineTo(heartOffsetX + (x + dx) * scaleAmt + chaosX + 3, heartOffsetY + (y + dy) * scaleAmt + chaosY);
+        ctx.moveTo(heartOffsetX + (x + dx) * scaleAmt + chaosX, heartOffsetY + (y + dy) * scaleAmt + chaosY - 3);
+        ctx.lineTo(heartOffsetX + (x + dx) * scaleAmt + chaosX, heartOffsetY + (y + dy) * scaleAmt + chaosY + 3);
+        ctx.stroke();
+      }
     } else {
       // đang rơi khỏi tim, bay dần về đúng vị trí trên bánh — màu pha mượt dần, không bật đột ngột
       const startX = heartOffsetX + p.nx * a * scaleAmt;
