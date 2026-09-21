@@ -16,6 +16,9 @@ canvas { display: block; filter: brightness(1.08) saturate(1.12) drop-shadow(0 0
 .falling-emoji {
   position: fixed;
   top: -60px;
+  /* Vùng bấm rộng hơn kích thước biểu tượng để bấm xung quanh vẫn nhận */
+  padding: 12px;
+  margin: -12px;
   font-size: 34px;
   cursor: pointer;
   user-select: none;
@@ -160,7 +163,7 @@ canvas { display: block; filter: brightness(1.08) saturate(1.12) drop-shadow(0 0
   </div>
 </div>
 
-<audio id="backgroundMusic" src="music.mp3" loop preload="auto"></audio>
+<audio id="backgroundMusic" src="music.mp3" loop preload="auto" autoplay></audio>
 
 <script>
 const canvas = document.getElementById("c");
@@ -912,7 +915,7 @@ function draw(now){
 
   const heartOffsetX = w/2;
   const heartOffsetY = h/2 - h*0.30; // vị trí tim
-  const scaleAmt = 9.6 * beat; // thu nhỏ tim để không vướng đường sao
+  const scaleAmt = 12.5 * beat; // phóng to trái tim
 
   // Dùng kích thước lớn hơn để các hạt và chi tiết bánh hiển thị rõ hơn.
   // Thu nhỏ nhẹ trên điện thoại để bánh không chiếm hết khung hình.
@@ -1222,7 +1225,6 @@ function startMusic(){
   backgroundMusic.play().catch(() => {});
 }
 setTimeout(startMusic, 2000);
-document.addEventListener("click", startMusic, { once: true });
 </script>
 
 </body>
