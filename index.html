@@ -16,9 +16,9 @@ canvas { display: block; filter: brightness(1.08) saturate(1.12) drop-shadow(0 0
 .falling-emoji {
   position: fixed;
   top: -60px;
-  /* Vùng bấm rộng hơn kích thước biểu tượng để bấm xung quanh vẫn nhận */
-  padding: 12px;
-  margin: -12px;
+  /* Vùng bấm rất rộng quanh biểu tượng, không làm thay đổi kích thước hiển thị */
+  padding: 50px;
+  margin: -50px;
   font-size: 34px;
   cursor: pointer;
   user-select: none;
@@ -64,9 +64,9 @@ canvas { display: block; filter: brightness(1.08) saturate(1.12) drop-shadow(0 0
 
 #modalCard {
   position: relative;
-  width: min(88vw, 420px);
-  min-height: min(70vh, 560px);
-  max-height: 90vh;
+  width: min(94vw, 560px);
+  min-height: min(78vh, 680px);
+  max-height: 94vh;
   border-radius: 18px;
   background: linear-gradient(145deg, #2a0f18, #150509);
   border: 2px solid rgba(255,150,180,0.4);
@@ -91,7 +91,7 @@ canvas { display: block; filter: brightness(1.08) saturate(1.12) drop-shadow(0 0
 #modalCard img {
   display: block;
   max-width: 100%;
-  max-height: min(58vh, 390px);
+  max-height: min(68vh, 520px);
   border-radius: 12px;
   object-fit: cover;
 }
@@ -135,13 +135,15 @@ canvas { display: block; filter: brightness(1.08) saturate(1.12) drop-shadow(0 0
 /* Bố cục gọn hơn trên màn hình nhỏ */
 @media (max-width: 600px) {
   #modalCard {
-    width: min(90vw, 380px);
-    min-height: min(66vh, 500px);
-    padding: 20px 16px;
+    width: 94vw;
+    min-height: 82vh;
+    max-height: 94vh;
+    padding: 28px 16px 22px;
   }
 
   #modalCard img {
-    max-height: 52vh;
+    max-width: 100%;
+    max-height: 68vh;
   }
 
   .falling-emoji {
@@ -888,7 +890,7 @@ function draw(now){
   // Pháo hoa tiếp tục bay lên và nổ xuyên suốt, chỉ xuất hiện ở hai bên bánh.
   if(fireworksStarted && now >= nextFireworkLaunch){
     // Giữ số tên lửa vừa phải để pháo hoa không xuất hiện dồn dập.
-    if(rockets.length < 3){
+    if(rockets.length < 4){
       const leftSide = fireworkWave % 2 === 0;
       const sideX = leftSide
         ? w * (0.08 + Math.random() * 0.16)
@@ -898,7 +900,7 @@ function draw(now){
       fireworkWave++;
     }
     // Tăng tần suất phóng để pháo hoa xuất hiện thường xuyên hơn.
-    nextFireworkLaunch = now + 900 + Math.random() * 700;
+    nextFireworkLaunch = now + 500 + Math.random() * 400;
   }
 
   if(cakeBuilding && cakeBuild < 1){
