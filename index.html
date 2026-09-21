@@ -20,12 +20,24 @@ canvas { display: block; filter: brightness(1.08) saturate(1.12) drop-shadow(0 0
   cursor: pointer;
   user-select: none;
   z-index: 5;
-  filter: drop-shadow(0 0 6px rgba(255,255,255,0.35));
-  transition: transform 0.15s ease;
+  color: #ffffff;
+  filter: drop-shadow(0 0 3px rgba(255,255,255,0.55));
+  text-shadow: 0 0 3px rgba(255,255,255,0.8), 0 0 7px rgba(255,255,255,0.35);
+  transition: transform 0.15s ease, filter 0.15s ease;
   will-change: transform, top;
 }
+.falling-emoji:nth-of-type(3n),
+.falling-emoji:nth-of-type(3n + 1) {
+  color: #ffffff;
+  text-shadow: 0 0 3px rgba(255,255,255,0.8), 0 0 7px rgba(255,255,255,0.35);
+}
 .falling-emoji:hover {
-  transform: scale(1.25);
+  transform: scale(1.35) rotate(12deg);
+  filter: drop-shadow(0 0 5px rgba(255,255,255,0.75));
+}
+.falling-flower {
+  color: #ffd9e6;
+  text-shadow: 0 0 3px rgba(255,210,225,0.5);
 }
 
 /* ===== MODAL HIỆN ẢNH ===== */
@@ -115,6 +127,23 @@ canvas { display: block; filter: brightness(1.08) saturate(1.12) drop-shadow(0 0
   border: none;
   cursor: pointer;
   line-height: 1;
+}
+
+/* Bố cục gọn hơn trên màn hình nhỏ */
+@media (max-width: 600px) {
+  #modalCard {
+    width: min(90vw, 380px);
+    min-height: min(66vh, 500px);
+    padding: 20px 16px;
+  }
+
+  #modalCard img {
+    max-height: 52vh;
+  }
+
+  .falling-emoji {
+    font-size: 28px;
+  }
 }
 </style>
 </head>
@@ -572,7 +601,7 @@ function makeCakeTargetParticle(x, y, alphaVal){
   return {
     nx: (x - ART_HALF) / ART_HALF,
     ny: (y*0.72 - ART_CY) / ART_HALF,
-    r: (0.3 + Math.random()*0.42 + (alphaVal/255)*0.22) / ART_HALF,
+          r: (0.48 + Math.random()*0.62 + (alphaVal/255)*0.34) / ART_HALF,
     baseO,
     color,
     rgb,
@@ -588,7 +617,7 @@ const cakeTargets = [];
 function generateCakeTargets(){
   cakeTargets.length = 0;
   const data = ac.getImageData(0,0,700,900).data;
-  const bodyCeiling = 0.135;
+  const bodyCeiling = 0.12;
   // Lấy mẫu theo bước 2 giúp giảm thời gian khởi tạo mà vẫn giữ rõ hình bánh.
   for(let y=0; y<900; y += 2){
     for(let x=0; x<700; x += 2){
@@ -597,13 +626,13 @@ function generateCakeTargets(){
       const t = aVal/255;
       let density;
       if(t <= bodyCeiling){
-        density = Math.pow(t/bodyCeiling, 1.6) * 0.34;
+        density = Math.pow(t/bodyCeiling, 1.6) * 0.4;
       } else {
         const u = (t - bodyCeiling)/(1 - bodyCeiling);
-        density = 0.34 + Math.pow(u, 0.35) * 0.56;
+        density = 0.4 + Math.pow(u, 0.35) * 0.6;
       }
-      // càng gần rìa mỗi tầng thì càng dày hạt
-      density = density + edgeDarkenFactor(x, y) * 0.5;
+      // Tăng mật độ ở vùng nét và sát rìa để bánh đầy, rõ hơn.
+      density = density + edgeDarkenFactor(x, y) * 0.78;
       density = Math.min(1, density);
       if(Math.random() < density) cakeTargets.push(makeCakeTargetParticle(x,y,aVal));
     }
@@ -886,9 +915,10 @@ function draw(now){
   const scaleAmt = 9.6 * beat; // thu nhỏ tim để không vướng đường sao
 
   // Dùng kích thước lớn hơn để các hạt và chi tiết bánh hiển thị rõ hơn.
-  const cakeScale = Math.min(w, h) * 0.53;
+  // Thu nhỏ nhẹ trên điện thoại để bánh không chiếm hết khung hình.
+  const cakeScale = Math.min(w, h) * (w <= 600 ? 0.47 : 0.53);
   const cakeCenterX = w/2;
-  const cakeCenterY = heartOffsetY + h*0.30; // ngay bên dưới trái tim
+  const cakeCenterY = heartOffsetY + h*0.27; // hạ bánh xuống một chút để bố cục thoáng hơn
   const cakeBreath = 1 + Math.sin(now * 0.0012) * 0.03; // bánh to ra nhỏ vào nhẹ nhàng
   const flameFit = cakeScale / ART_HALF; // tỉ lệ quy đổi độ lắc của ngọn nến
 
@@ -979,7 +1009,6 @@ function draw(now){
         ctx.arc(px, py, ep.target.r * cakeScale, 0, Math.PI*2);
         ctx.fillStyle = ep.target.color;
         ctx.fill();
-        ctx.globalCompositeOperation = "source-over";
         continue;
       }
 
@@ -1015,24 +1044,27 @@ function draw(now){
 
   /* ===== CHỮ HAPPY BIRTHDAY ===== */
   if(textOpacity > 0){
-    const textY = h/2 - h*0.30 - h*0.12; // hạ chữ xuống gần trái tim hơn
+    const textY = h/2 - h*0.30 - h*0.135; // nâng chữ lên một chút
 
     ctx.save();
     ctx.globalAlpha = ease(textOpacity);
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
-    const fontSize = Math.max(21, Math.min(w * 0.052, 42));
-    // Nét chữ mảnh, mềm và thanh hơn; không dùng hạt.
-    ctx.font = `italic 400 ${fontSize}px "Brush Script MT", "Segoe Script", cursive, serif`;
+    const fontSize = w <= 600
+      ? Math.max(18, Math.min(w * 0.058, 30))
+      : Math.max(21, Math.min(w * 0.052, 42));
+    // Kiểu chữ mềm mại, thanh lịch và đồng bộ với màu hồng của bánh.
+    ctx.font = `italic 500 ${fontSize}px "Segoe Script", "Brush Script MT", cursive`;
+    ctx.letterSpacing = "0.4px";
 
-    ctx.shadowColor = "rgba(217, 87, 120, 0.42)";
-    ctx.shadowBlur = 10;
+    ctx.shadowColor = "rgba(217, 87, 120, 0.28)";
+    ctx.shadowBlur = 6;
 
     const grad = ctx.createLinearGradient(w/2 - 160, textY, w/2 + 160, textY);
-    grad.addColorStop(0, "#ffd0d9");
+    grad.addColorStop(0, "#ffd0dc");
     grad.addColorStop(0.5, "#d95778");
-    grad.addColorStop(1, "#ffd0d9");
+    grad.addColorStop(1, "#ffd0dc");
     ctx.fillStyle = grad;
 
     ctx.fillText("Happy Birthday Vân Vân", w/2, textY);
@@ -1046,7 +1078,7 @@ requestAnimationFrame(draw);
 
 <script>
 /* ===================== EMOJI RƠI ===================== */
-const EMOJIS = ["⭐","🌟","✨","💫","🌠"];
+const EMOJIS = ["✦", "✧", "✶", "✷", "✹", "❈", "❉", "⋆", "⭒", "❀", "✿", "❁", "❃"];
 
 /*
   🔧 GHI CHÚ CHO SAU NÀY:
@@ -1117,7 +1149,9 @@ modalOverlay.addEventListener("click", (e) => {
 function spawnEmoji(){
   const el = document.createElement("div");
   const emoji = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+  const isFlower = ["❀", "✿", "❁", "❃"].includes(emoji);
   el.className = "falling-emoji";
+  if(isFlower) el.classList.add("falling-flower");
   el.textContent = emoji;
 
   // Giữ sao ở hai bên, tránh toàn bộ vùng tim và bánh ở trung tâm.
@@ -1135,8 +1169,12 @@ function spawnEmoji(){
     startX = rightMin + Math.random() * Math.max(20, (window.innerWidth - 40 - rightMin));
   }
 
-  const size = 14 + Math.random() * 10; // thu nhỏ icon
-  const duration = 7 + Math.random() * 5;
+  const size = isFlower
+    ? 16 + Math.random() * 8
+    : 14 + Math.random() * 10; // hoa nhỏ hơn sao, không che bánh
+  const duration = isFlower
+    ? 9 + Math.random() * 4
+    : 7 + Math.random() * 5;
   const sway = (Math.random() * 40 - 20); // lắc nhẹ hơn để không trôi vào vùng tim
   const rotateEnd = (Math.random() * 360 - 180);
 
