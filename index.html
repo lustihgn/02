@@ -1235,7 +1235,7 @@ function spawnEmoji(){
 
   const size = isFlower
     ? 16 + Math.random() * 8
-    : 14 + Math.random() * 10; // hoa nhỏ hơn sao, không che bánh
+    : (14 + Math.random() * 10) * 2; // tăng kích thước các ngôi sao lên gấp đôi
   const duration = isFlower
     ? 9 + Math.random() * 4
     : 7 + Math.random() * 5;
