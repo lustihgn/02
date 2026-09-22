@@ -135,15 +135,15 @@ canvas { display: block; filter: brightness(1.08) saturate(1.12) drop-shadow(0 0
 /* Bố cục gọn hơn trên màn hình nhỏ */
 @media (max-width: 600px) {
   #modalCard {
-    width: 94vw;
-    min-height: 82vh;
-    max-height: 94vh;
-    padding: 28px 16px 22px;
+    width: 98vw;
+    min-height: 90vh;
+    max-height: 98vh;
+    padding: 30px 8px 22px;
   }
 
   #modalCard img {
     max-width: 100%;
-    max-height: 68vh;
+    max-height: 76vh;
   }
 
   .falling-emoji {
@@ -917,7 +917,8 @@ function draw(now){
 
   const heartOffsetX = w/2;
   const heartOffsetY = h/2 - h*0.30; // vị trí tim
-  const scaleAmt = 12.5 * beat; // phóng to trái tim
+  // Trên điện thoại phóng trái tim lên 1.5 lần để dễ nhìn hơn.
+  const scaleAmt = 12.5 * beat * (w <= 600 ? 1.5 : 1);
 
   // Dùng kích thước lớn hơn để các hạt và chi tiết bánh hiển thị rõ hơn.
   // Thu nhỏ nhẹ trên điện thoại để bánh không chiếm hết khung hình.
@@ -1247,12 +1248,17 @@ setTimeout(() => {
   setInterval(spawnEmoji, 1400); // giảm tần suất xuất hiện
 }, 2200);
 
-// Trình duyệt có thể chặn autoplay; thử phát sau 2 giây và phát lại khi người dùng tương tác.
+// Điện thoại thường chặn autoplay nếu chưa có thao tác người dùng.
 const backgroundMusic = document.getElementById("backgroundMusic");
 function startMusic(){
   backgroundMusic.play().catch(() => {});
 }
+
+// Thử autoplay trước; nếu bị chặn, phát ngay ở lần chạm/click đầu tiên.
 setTimeout(startMusic, 2000);
+document.addEventListener("pointerdown", startMusic, { once: true, passive: true });
+document.addEventListener("touchstart", startMusic, { once: true, passive: true });
+document.addEventListener("click", startMusic, { once: true });
 </script>
 
 </body>
