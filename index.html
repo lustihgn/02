@@ -56,6 +56,14 @@ canvas { display: block; filter: brightness(1.08) saturate(1.12) drop-shadow(0 0
   animation: fadeIn 0.25s ease;
 }
 #modalOverlay.show { display: flex; }
+#modalOverlay.loading #modalCard { visibility: hidden; }
+#modalOverlay.loading::after {
+  content: "Đang mở ảnh…";
+  position: absolute;
+  color: #ffd9e6;
+  font: 15px sans-serif;
+  opacity: 0.85;
+}
 
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -64,9 +72,9 @@ canvas { display: block; filter: brightness(1.08) saturate(1.12) drop-shadow(0 0
 
 #modalCard {
   position: relative;
-  width: min(94vw, 560px);
-  min-height: min(78vh, 680px);
-  max-height: 94vh;
+  width: min(98vw, 1120px);
+  min-height: min(88vh, 1360px);
+  max-height: 98vh;
   border-radius: 18px;
   background: linear-gradient(145deg, #2a0f18, #150509);
   border: 2px solid rgba(255,150,180,0.4);
@@ -91,7 +99,7 @@ canvas { display: block; filter: brightness(1.08) saturate(1.12) drop-shadow(0 0
 #modalCard img {
   display: block;
   max-width: 100%;
-  max-height: min(68vh, 520px);
+  max-height: min(82vh, 1040px);
   border-radius: 12px;
   object-fit: cover;
 }
@@ -135,15 +143,17 @@ canvas { display: block; filter: brightness(1.08) saturate(1.12) drop-shadow(0 0
 /* Bố cục gọn hơn trên màn hình nhỏ */
 @media (max-width: 600px) {
   #modalCard {
-    width: 98vw;
-    min-height: 90vh;
-    max-height: 98vh;
-    padding: 30px 8px 22px;
+    width: 100vw;
+    min-height: 98vh;
+    max-height: 100vh;
+    border-radius: 12px;
+    padding: 34px 4px 18px;
   }
 
   #modalCard img {
     max-width: 100%;
-    max-height: 76vh;
+    max-height: 84vh;
+    border-radius: 8px;
   }
 
   .falling-emoji {
@@ -917,8 +927,9 @@ function draw(now){
 
   const heartOffsetX = w/2;
   const heartOffsetY = h/2 - h*0.30; // vị trí tim
-  // Trên điện thoại phóng trái tim lên 1.5 lần để dễ nhìn hơn.
-  const scaleAmt = 12.5 * beat * (w <= 600 ? 1.5 : 1);
+  // Trên điện thoại phóng trái tim lớn gấp 3 lần kích thước máy tính.
+  // Đây là mức gấp đôi so với hệ số 1.5 trước đó.
+  const scaleAmt = 12.5 * beat * (w <= 600 ? 3 : 1);
 
   // Dùng kích thước lớn hơn để các hạt và chi tiết bánh hiển thị rõ hơn.
   // Thu nhỏ nhẹ trên điện thoại để bánh không chiếm hết khung hình.
@@ -1147,26 +1158,47 @@ const modalCaption = document.getElementById("modalCaption");
 const modalNumber = document.getElementById("modalNumber");
 const modalClose = document.getElementById("modalClose");
 let photoIndex = 0;
+const imageCache = new Map();
+
+// Tải ảnh ngay khi trang mở để lần bấm sau không phải chờ mạng/đĩa.
+for(let i = 1; i <= PHOTO_COUNT; i++){
+  const preloaded = new Image();
+  preloaded.src = `anh${i}.jpg`;
+  imageCache.set(i, preloaded);
+}
 
 function openModal(emoji){
-  modalCard.querySelectorAll("img").forEach(img => img.remove());
-
   const imageNumber = photoIndex++ % PHOTO_COUNT + 1;
+  const cachedImage = imageCache.get(imageNumber);
   const img = document.createElement("img");
-  img.src = `anh${imageNumber}.jpg`;
   img.alt = `Ảnh kỷ niệm ${imageNumber}`;
-  img.onerror = () => {
-    img.remove();
-    modalEmoji.style.display = "block";
-    modalEmoji.textContent = emoji;
-  };
-  modalCard.insertBefore(img, modalCaption);
 
+  modalOverlay.classList.add("show", "loading");
+  modalCard.querySelectorAll("img").forEach(oldImg => oldImg.remove());
   modalEmoji.style.display = "none";
   modalCaption.style.display = "block";
   modalCaption.textContent = WISHES[imageNumber - 1];
   modalNumber.textContent = `Ảnh ${imageNumber}/${PHOTO_COUNT}`;
-  modalOverlay.classList.add("show");
+  modalCard.insertBefore(img, modalCaption);
+
+  const showImage = () => {
+    modalOverlay.classList.remove("loading");
+  };
+
+  img.onload = showImage;
+  img.onerror = () => {
+    img.remove();
+    modalEmoji.style.display = "block";
+    modalEmoji.textContent = emoji;
+    modalOverlay.classList.remove("loading");
+  };
+
+  // Dùng ảnh đã preload nếu có; nếu chưa xong thì chờ đúng ảnh đó tải.
+  img.src = cachedImage.src;
+  if(cachedImage.complete){
+    if(cachedImage.naturalWidth > 0) showImage();
+    else img.onerror();
+  }
 }
 
 function closeModal(){
